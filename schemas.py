@@ -1,10 +1,12 @@
 
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
 class SProductAdd(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     name: str
     price: Optional[float] = None
     model: Optional[str] = None

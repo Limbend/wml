@@ -11,14 +11,12 @@ router = APIRouter(
 
 
 @router.get('')
-async def get_products() -> SProduct:
+async def get_products() -> list[SProduct]:
     products = await ProductRepo.find_all()
-
-    return {"products": products}
+    return products
 
 
 @router.post('')
 async def add_products(product: Annotated[SProductAdd, Depends()]) -> SProductId:
     product_id = await ProductRepo.add_one(product)
-
     return {'ok': True, 'product_id': product_id}

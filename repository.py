@@ -1,6 +1,5 @@
-
-
 from sqlalchemy import select
+
 from schemas import SProductAdd, SProduct
 from database import ProductOrm, new_session
 
@@ -18,7 +17,8 @@ class ProductRepo:
     @classmethod
     async def find_all(cls) -> list[SProduct]:
         async with new_session() as session:
-            result = await session.execute(select(ProductOrm))
-            product_shchemas = [SProduct.model_validate(product_model)
-                                for product_model in result.scalars().all()]
+            query = select(ProductOrm)
+            result = await session.execute(query)
+            product_shchemas = [SProduct.model_validate(
+                product_model) for product_model in result.scalars().all()]
             return product_shchemas
