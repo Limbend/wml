@@ -1,0 +1,20 @@
+# Not public
+*.np.*
+
+# Py
+venv/
+__pycache__/
+
+# VS Code
+.vscode/
+.vs/
+
+# Jupyter notebook
+**/.ipynb_checkpoints/
+*checkpoint.ipynb
+
+# Log files
+*.log
+
+# temp files
+temp/
