@@ -17,5 +17,10 @@ class SProductAdd(BaseModel):
     priority: Optional[int] = None
 
 
-class SProductGet(SProductAdd):
+class SProduct(SProductAdd):
     id: int
+
+
+class SProductId(BaseModel):
+    ok: bool = True
+    product_id: int
