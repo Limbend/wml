@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
-from app.schemas import SProductAdd, SProduct
-from app.database import ProductOrm, new_session
+from backend.schemas import SProductAdd, SProduct
+from backend.database import ProductOrm, new_session
 
 
 class ProductRepo:

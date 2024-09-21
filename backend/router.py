@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends
 
-from app.repository import ProductRepo
-from app.schemas import SProduct, SProductAdd, SProductId
+from backend.repository import ProductRepo
+from backend.schemas import SProduct, SProductAdd, SProductId
 
 router = APIRouter(
     prefix='/products',
