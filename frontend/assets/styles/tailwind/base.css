@@ -1,0 +1,9 @@
+@tailwind components;
+@tailwind utilities;
+@tailwind base;
+
+:root {
+  --error-color: #e24c4c;
+  --link-color: #6366f1;
+  --border-color: var(--p-surface-200);
+}
