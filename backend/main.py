@@ -20,5 +20,5 @@ async def lifespan(app: FastAPI):
     yield
     print("Выключение")
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(title="WML", lifespan=lifespan)
 app.include_router(product_router)

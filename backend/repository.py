@@ -1,6 +1,7 @@
+from pydantic import Field
 from sqlalchemy import select, update
 
-from backend.schemas import SProductAdd, SProduct, SResolve
+from backend.schemas import SProductAdd, SProduct, SResolve, SPagination
 from backend.database import ProductOrm, new_session
 
 
@@ -15,9 +16,10 @@ class ProductRepo:
             return SResolve(product_id=product.id)
 
     @classmethod
-    async def find_all(cls) -> list[SProduct]:
+    async def get_list(cls, padding: SPagination) -> list[SProduct]:
         async with new_session() as session:
-            query = select(ProductOrm)
+            query = select(ProductOrm).offset(
+                padding.offset).limit(padding.limit)
             result = await session.execute(query)
             product_shchemas = [SProduct.model_validate(
                 product_model) for product_model in result.scalars().all()]
