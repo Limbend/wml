@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
+    ORIGINS: list[str]
 
     @property
     def DATABASE_URL_temp_sqlite(self):
@@ -16,6 +17,10 @@ class Settings(BaseSettings):
     def DATABASE_URL_asyncpg(self):
         # postgresql+asyncpg://postgres:postgres@localhost:5432/sa
         return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+
+    @property
+    def CORS_ORIGINS(self):
+        return self.ORIGINS
 
     model_config = SettingsConfigDict(env_file=".env")
 
