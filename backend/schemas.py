@@ -25,12 +25,24 @@ class SProduct(SProductAdd):
     guarantee_end_date: Optional[datetime] = None
 
 
-class SResolve(BaseModel):
+class SResponse(BaseModel):
     ok: bool = True
-    product_id: int
     message: Optional[str] = None
+
+
+class SResponseAdd(SResponse):
+    product_id: Optional[int] = None
+
+
+class SResponseUpdate(SResponse):
+    updated_product: Optional[SProduct] = None
 
 
 class SPagination(BaseModel):
     limit: int = Field(25, ge=1, le=100)
     offset: int = Field(0, ge=0)
+
+
+class SProductList(BaseModel):
+    products: list[SProduct]
+    count: int

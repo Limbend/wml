@@ -4,6 +4,7 @@
 
 # Py
 venv/
+.venv/
 __pycache__/
 
 # VS Code
