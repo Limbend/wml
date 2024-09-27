@@ -1,26 +1,20 @@
-from datetime import datetime
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from backend.repository import ProductRepo
-from backend.router import router as product_router
-from backend.database import create_tables, delete_tables
-from backend.schemas import SProductAdd
-from backend.config import settings
+from router import router as product_router
+from config import settings
+
+logging.config.dictConfig(settings.LOGGING_CONFIG)
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await delete_tables()
-    print("База очищена")
-    await create_tables()
-    await ProductRepo.add_one(SProductAdd(name='lamp', price=179.99, buy_date=datetime.now()))
-    await ProductRepo.add_one(SProductAdd(name='ipod', price=20, buy_date=datetime.now()))
-    await ProductRepo.add_one(SProductAdd(name='spoon', price=475.50, buy_date=datetime.now()))
-    print("База готова к работе")
+    logger.info(f'WML STARTING')
     yield
-    print("Выключение")
+    logger.info(f'WML SHUTDOWN')
 
 app = FastAPI(title="WML", lifespan=lifespan)
 app.include_router(product_router)

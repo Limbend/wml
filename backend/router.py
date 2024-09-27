@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Body, Depends
 
-from backend.repository import ProductRepo
-from backend.schemas import SPagination, SProductAdd, SProductList, SResponseAdd, SResponseUpdate
+from repository import ProductRepo
+from schemas import SPagination, SProductAdd, SProductList, SResponseAdd, SResponseUpdate
 
 router = APIRouter(
     prefix='/products',

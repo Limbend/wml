@@ -1,18 +1,8 @@
 from decimal import Decimal
 from typing import Annotated, Optional
 from sqlalchemy import Numeric, String
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
-
-from backend.config import settings
-
-engine = create_async_engine(
-    settings.DATABASE_URL_asyncpg,
-    echo=True,
-)
-new_session = async_sessionmaker(engine, expire_on_commit=False)
-
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
 str_50 = Annotated[str, 50]
@@ -55,13 +45,3 @@ class ProductOrm(Base):
     receipt: Mapped[Optional[str]]
     shop: Mapped[Optional[str_255]]
     priority: Mapped[Optional[int]]
-
-
-async def create_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-
-async def delete_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)

@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 
-from backend.database import str_50, str_255, num_9_2
+from models import str_50, str_255, num_9_2
 
 
 class SProductAdd(BaseModel):

@@ -1,0 +1,47 @@
+# Dev docker compose
+services:
+  wml_db:
+    image: postgres:17
+    container_name: wml_db
+    command: ["-p ${BACKEND_DB_PORT:-1212}"]
+    environment:
+      POSTGRES_DB: ${BACKEND_DB_NAME:-wml}
+      POSTGRES_USER: ${BACKEND_DB_USER:-wml}
+      POSTGRES_PASSWORD: ${BACKEND_DB_PASS:?database password required}
+    #   PGDATA: /var/lib/postgresql/data/pgdata
+    # volumes:
+    #   - ./temp/postgres:/var/lib/postgresql/data
+    # ports:
+    #   - 8485:${BACKEND_DB_PORT:-1212}
+    networks:
+      wml-net:
+    restart: unless-stopped
+
+  wml_backend_api:
+    build:
+      context: .
+    container_name: wml_backend_api
+    command: ["/app/backend/docker/dev.app.sh"]
+    environment:
+      BACKEND_DB_HOST: wml_db
+      BACKEND_DB_PORT: ${BACKEND_DB_PORT:-1212}
+      BACKEND_DB_USER: ${BACKEND_DB_USER:-wml}
+      BACKEND_DB_PASS: ${BACKEND_DB_PASS:?database password required}
+      BACKEND_DB_NAME: ${BACKEND_DB_NAME:-wml}
+      BACKEND_ORIGINS: ${BACKEND_ORIGINS:-[]}
+    volumes:
+      - ./logs:/app/backend/logs
+    ports:
+      - 8484:8000
+    depends_on:
+      - wml_db
+    networks:
+      wml-net:
+    restart: unless-stopped
+
+networks:
+  wml-net:
+    name: wml-net
+    # driver: bridge
+    # driver_opts:
+    #   com.docker.network.bridge.name: wml-net

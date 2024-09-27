@@ -1,28 +1,66 @@
+import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    DB_HOST: str
-    DB_PORT: int
-    DB_USER: str
-    DB_PASS: str
-    DB_NAME: str
-    ORIGINS: list[str]
+    BACKEND_DB_HOST: str
+    BACKEND_DB_PORT: int
+    BACKEND_DB_NAME: str
+    BACKEND_DB_USER: str
+    BACKEND_DB_PASS: str
 
-    @property
-    def DATABASE_URL_temp_sqlite(self):
-        return f"sqlite+aiosqlite:///temp/products.db"
+    BACKEND_ORIGINS: list[str]
 
     @property
     def DATABASE_URL_asyncpg(self):
         # postgresql+asyncpg://postgres:postgres@localhost:5432/sa
-        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        return f"postgresql+asyncpg://{self.BACKEND_DB_USER}:{self.BACKEND_DB_PASS}@{self.BACKEND_DB_HOST}:{self.BACKEND_DB_PORT}/{self.BACKEND_DB_NAME}"
 
     @property
     def CORS_ORIGINS(self):
-        return self.ORIGINS
+        return self.BACKEND_ORIGINS
 
-    model_config = SettingsConfigDict(env_file=".env")
+    @property
+    def LOGGING_CONFIG(self):
+        return {
+            "version": 1,
+            "disable_existing_loggers": True,
+            "formatters": {
+                "standard": {"format": "%(asctime)-23s - %(levelname)-8s - %(name)-24s - %(message)s"},
+            },
+            "handlers": {
+                "default": {
+                    "level": "INFO",
+                    "formatter": "standard",
+                    "class": "logging.StreamHandler",
+                    "stream": "ext://sys.stdout",  # Default is stderr
+                },
+                "info_rotating_file_handler": {
+                    "level": "INFO",
+                    "formatter": "standard",
+                    "class": "logging.handlers.RotatingFileHandler",
+                    'filename': './logs/wml.info.log',
+                    'mode': 'a',
+                    'maxBytes': 1048576,
+                    'backupCount': 3
+                }
+            },
+            "loggers": {
+                "": {  # root logger
+                    "level":  "INFO",
+                    "handlers": ["default", "info_rotating_file_handler"],
+                    "propagate": False,
+                },
+                "uvicorn.error": {
+                    "level": "DEBUG",
+                    "handlers": ["default", "info_rotating_file_handler"],
+                },
+                "uvicorn.access": {
+                    "level": "DEBUG",
+                    "handlers": ["default", "info_rotating_file_handler"],
+                },
+            },
+        }
 
 
 settings = Settings()

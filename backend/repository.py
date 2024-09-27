@@ -1,8 +1,19 @@
 from pydantic import Field
 from sqlalchemy import func, select, update
 
-from backend.schemas import SProductAdd, SProduct, SProductList, SResponseAdd, SResponseUpdate, SPagination
-from backend.database import ProductOrm, new_session
+from schemas import SProductAdd, SProduct, SProductList, SResponseAdd, SResponseUpdate, SPagination
+from models import ProductOrm
+
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+
+
+from config import settings
+
+engine = create_async_engine(
+    settings.DATABASE_URL_asyncpg,
+    echo=True,
+)
+new_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
 class ProductRepo:
