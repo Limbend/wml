@@ -51,6 +51,10 @@ class Settings(BaseSettings):
                     "handlers": ["default", "info_rotating_file_handler"],
                     "propagate": False,
                 },
+                "sqlalchemy.engine.Engine": {
+                    "level": "INFO",
+                    "handlers": ["default", "info_rotating_file_handler"],
+                },
                 "uvicorn.error": {
                     "level": "DEBUG",
                     "handlers": ["default", "info_rotating_file_handler"],
