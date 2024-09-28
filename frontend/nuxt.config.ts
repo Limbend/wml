@@ -1,4 +1,4 @@
-import Aura from '@primevue/themes/aura';
+import Lara from '@primevue/themes/lara';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -14,20 +14,30 @@ export default defineNuxtConfig({
   typescript: {
     typeCheck: true
   },
-  modules: ['@primevue/nuxt-module'],
+  modules: ['@primevue/nuxt-module', '@nuxtjs/tailwindcss'],
   primevue: {
     options: {
       theme: {
-        preset: Aura
+        preset: Lara
       }
-    }
+    },
+    autoImport: false
   },
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {}
-    }
+  tailwindcss: {
+    exposeConfig: true,
+    viewer: true
   },
   css: ['~/assets/styles/tailwind/base.css', '~/assets/styles/main.scss'],
-  components: [{ path: '~/modules', pathPrefix: false }, '~/components']
+  components: [{ path: '~/modules', pathPrefix: false }, '~/components'],
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: { api: 'modern-compiler' }
+      }
+    },
+    build: {
+      sourcemap: true
+    }
+  },
+  sourcemap: { server: true, client: false }
 });
