@@ -20,7 +20,7 @@ config = context.config
 
 section = config.config_ini_section
 config.set_section_option(
-    section, "DATABASE_URL_asyncpg", settings.DATABASE_URL_asyncpg)
+    section, "DATABASE_URL_asyncpg", settings.db.connection_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

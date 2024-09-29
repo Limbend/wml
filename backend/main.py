@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from router import router as product_router
 from config import settings
 
-logging.config.dictConfig(settings.LOGGING_CONFIG)
+logging.config.dictConfig(settings.logging_config)
 logger = logging.getLogger(__name__)
 
 
@@ -22,7 +22,7 @@ app.include_router(product_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=settings.origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
     allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin",

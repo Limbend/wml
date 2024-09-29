@@ -1,27 +1,36 @@
 import os
+from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseSettings):
-    BACKEND_DB_HOST: str
-    BACKEND_DB_PORT: int
-    BACKEND_DB_NAME: str
-    BACKEND_DB_USER: str
-    BACKEND_DB_PASS: str
-
-    BACKEND_ORIGINS: list[str]
+class DatabaseConfig(BaseModel):
+    host: str
+    port: int
+    name: str
+    user: str
+    password: str
 
     @property
-    def DATABASE_URL_asyncpg(self):
+    def connection_url(self):
         # postgresql+asyncpg://postgres:postgres@localhost:5432/sa
-        return f"postgresql+asyncpg://{self.BACKEND_DB_USER}:{self.BACKEND_DB_PASS}@{self.BACKEND_DB_HOST}:{self.BACKEND_DB_PORT}/{self.BACKEND_DB_NAME}"
+        return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        case_sensitive=False,
+        env_nested_delimiter="__",
+        env_prefix="BACKEND__",
+    )
+
+    db: DatabaseConfig
+    origins: list[str]
 
     @property
-    def CORS_ORIGINS(self):
-        return self.BACKEND_ORIGINS
+    def logging_config(self):
+        log_dir = './logs'
+        os.makedirs(log_dir, exist_ok=True)
 
-    @property
-    def LOGGING_CONFIG(self):
         return {
             "version": 1,
             "disable_existing_loggers": True,
@@ -39,7 +48,7 @@ class Settings(BaseSettings):
                     "level": "INFO",
                     "formatter": "standard",
                     "class": "logging.handlers.RotatingFileHandler",
-                    'filename': './logs/wml.info.log',
+                    'filename': f'{log_dir}/wml.info.log',
                     'mode': 'a',
                     'maxBytes': 1048576,
                     'backupCount': 3
