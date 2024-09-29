@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends
 
 from repository import ProductRepo
-from schemas import SPagination, SProductAdd, SProductList, SResponseAdd, SResponseUpdate, SSort
+from schemas import SProductEdit, SPagination, SProductAdd, SProductList, SResponseAdd, SResponseUpdate, SSort
 
 router = APIRouter(
     prefix='/products',
@@ -23,30 +23,36 @@ async def add_products(product: Annotated[SProductAdd, Body()]) -> SResponseAdd:
 
 
 @router.patch('')
-async def update_one(
-        id: int,
-        data: Annotated[
-            dict,
-            Body(
-                openapi_examples={
-                    "one": {
-                        "summary": "One parameters",
-                        "description": "Update a single parameter. You can change any `product` parameter that is available during the creation of a new.",
-                        "value": {'price': 50.01},
-                    },
-                    "multiple": {
-                        "summary": "Multiple parameters",
-                        "description": "Update multiple parameters. You can change several parameters at once. But if you need to update the whole object, use the `put` method.",
-                        "value": {'price': 50.01, 'model': 'super pro max extra ++', 'buy_date': '2024-09-26'},
-                    }
-                },
-            ),
-        ]) -> SResponseUpdate:
-    resolve = await ProductRepo.update_one(id, data)
-    return resolve
-
-
-@router.put('')
-async def edit_products(id: int, product: Annotated[SProductAdd, Body()]) -> SResponseUpdate:
-    resolve = await ProductRepo.replase_one(id, product)
+async def edit_one(edit_product: Annotated[
+    SProductEdit,
+    Body(
+        openapi_examples={
+            "one": {
+                "summary": "One field",
+                "description": "Update a single field. You can change any `SProductEdit` field. Regardless of the number of fields to be modified, `product.id` must be passed!",
+                "value": {'id': 1, 'price': 50.01},
+            },
+            "multiple": {
+                "summary": "Multiple fields",
+                "description": "Update multiple fields.",
+                "value": {'id': 1, 'price': 50.01, 'model': 'super pro max extra ++', 'buy_date': '2024-09-29'},
+            },
+            "all": {
+                "summary": "All fields",
+                "description": "Completely rewrite the product, replacing all fields.",
+                "value": {'id': 1,
+                          "name": "Gamer's spoon",
+                          'price': 50.01,
+                          "model": 'super pro max extra ++',
+                          "is_purchased": False,
+                          "buy_date": "2024-09-29T11:35:14.019",
+                          "guarantee": 2,
+                          "receipt": "string",
+                          "shop": "https://amazon.com",
+                          "priority": 0
+                          },
+            }
+        })
+]) -> SResponseUpdate:
+    resolve = await ProductRepo.edit_one(edit_product)
     return resolve

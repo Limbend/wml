@@ -60,9 +60,15 @@ class Settings(BaseSettings):
                     "handlers": ["default", "info_rotating_file_handler"],
                     "propagate": False,
                 },
+                "repository": {
+                    "level":  "INFO",
+                    "handlers": ["default", "info_rotating_file_handler"],
+                    "propagate": False,
+                },
                 "sqlalchemy.engine.Engine": {
                     "level": "INFO",
                     "handlers": ["default", "info_rotating_file_handler"],
+                    "propagate": False,
                 },
                 "uvicorn.error": {
                     "level": "DEBUG",

@@ -21,6 +21,22 @@ class SProductAdd(BaseModel):
     priority: Optional[int] = Field(None, ge=0)
 
 
+class SProductEdit(SProductAdd):
+    id: int = Field(gt=0)
+    guarantee: Optional[int] = Field(None, ge=0)
+    is_purchased: Optional[bool] = None
+    name: Optional[str_50] = Field(None, min_length=1, max_length=50)
+
+    def get_edit_fields(self):
+        edit_fields = self.model_dump()
+
+        edit_fields = {key: edit_fields[key]
+                       for key in edit_fields.keys()
+                       if key != 'id' and not edit_fields[key] is None}
+
+        return edit_fields
+
+
 class SProduct(SProductAdd):
     id: int = Field(gt=0)
     guarantee_end_date: Optional[datetime] = None

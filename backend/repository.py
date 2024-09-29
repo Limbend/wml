@@ -1,6 +1,7 @@
+import logging
 from sqlalchemy import func, select, update
 
-from schemas import SProductAdd, SProduct, SProductList, SResponseAdd, SResponseUpdate, SPagination, SSort
+from schemas import SProductAdd, SProductEdit, SProduct, SProductList, SResponseAdd, SResponseUpdate, SPagination, SSort
 from models import ProductOrm
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
@@ -8,6 +9,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
 from config import settings
 
+logger = logging.getLogger(__name__)
 engine = create_async_engine(
     settings.db.connection_url,
     echo=True,
@@ -49,20 +51,18 @@ class ProductRepo:
             return SProductList(products=product_shchemas, total_count=total_count)
 
     @classmethod
-    async def update_one(cls, id: int, data: dict) -> SResponseUpdate:
+    async def edit_one(cls, product: SProductEdit) -> SResponseUpdate:
         async with new_session() as session:
-            query = update(ProductOrm).values(**data).filter_by(id=id)
-            # print(query.compile(compile_kwargs={'literal_binds': True}))
+            query = update(ProductOrm).values(
+                **product.get_edit_fields()).filter_by(id=product.id)
+            # logger.info(query.compile(compile_kwargs={'literal_binds': True}))
             await session.execute(query)
 
-            query = select(ProductOrm).filter_by(id=id)
+            query = select(ProductOrm).filter_by(id=product.id)
+            # logger.info(query.compile(compile_kwargs={'literal_binds': True}))
             result = await session.execute(query)
             product_shchemas = SProduct.model_validate(result.scalar())
 
             await session.commit()
 
         return SResponseUpdate(updated_product=product_shchemas)
-
-    @classmethod
-    async def replase_one(cls, id: int, data: SProductAdd) -> SResponseUpdate:
-        return cls.update_one(id, data.model_dump())
