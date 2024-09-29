@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends
 
 from repository import ProductRepo
-from schemas import SPagination, SProductAdd, SProductList, SResponseAdd, SResponseUpdate
+from schemas import SPagination, SProductAdd, SProductList, SResponseAdd, SResponseUpdate, SSort
 
 router = APIRouter(
     prefix='/products',
@@ -11,8 +11,8 @@ router = APIRouter(
 
 
 @router.get('')
-async def get_products(padding: Annotated[SPagination, Depends()]) -> SProductList:
-    products = await ProductRepo.get_list(padding)
+async def get_products(padding: Annotated[SPagination, Depends()], sorting: Annotated[SSort, Depends()]) -> SProductList:
+    products = await ProductRepo.get_list(padding, sorting)
     return products
 
 

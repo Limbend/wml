@@ -1,6 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
+from enum import Enum
 
 from models import str_50, str_255, num_9_2
 
@@ -39,10 +40,28 @@ class SResponseUpdate(SResponse):
 
 
 class SPagination(BaseModel):
-    limit: int = Field(25, ge=1, le=100)
-    offset: int = Field(0, ge=0)
+    by: int = Field(25, ge=1, le=100)
+    chunk: int = Field(0, ge=0)
+
+    def get_offset(self):
+        return self.chunk * self.by
+
+
+class ProductSortingField(Enum):
+    id = 'id'
+    name = 'name'
+    buy_date = 'buy_date'
+    guarantee = 'guarantee'
+    guarantee_end_date = 'guarantee_end_date'
+    shop = 'shop'
+    priority = 'priority'
+
+
+class SSort(BaseModel):
+    field: Optional[ProductSortingField] = ProductSortingField.id
+    desc: Optional[bool] = False
 
 
 class SProductList(BaseModel):
     products: list[SProduct]
-    count: int
+    total_count: int

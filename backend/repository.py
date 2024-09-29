@@ -1,7 +1,6 @@
-from pydantic import Field
 from sqlalchemy import func, select, update
 
-from schemas import SProductAdd, SProduct, SProductList, SResponseAdd, SResponseUpdate, SPagination
+from schemas import SProductAdd, SProduct, SProductList, SResponseAdd, SResponseUpdate, SPagination, SSort
 from models import ProductOrm
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
@@ -10,7 +9,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from config import settings
 
 engine = create_async_engine(
-    settings.DATABASE_URL_asyncpg,
+    settings.db.connection_url,
     echo=True,
 )
 new_session = async_sessionmaker(engine, expire_on_commit=False)
@@ -27,19 +26,27 @@ class ProductRepo:
             return SResponseAdd(product_id=product.id)
 
     @classmethod
-    async def get_list(cls, padding: SPagination) -> SProductList:
+    async def get_list(cls, padding: SPagination, sorting: SSort) -> SProductList:
         async with new_session() as session:
             query = select(func.count(ProductOrm.id))
             result = await session.execute(query)
-            count = result.scalar()
+            total_count = result.scalar()
 
-            query = select(ProductOrm).order_by(ProductOrm.id.asc()).offset(
-                padding.offset).limit(padding.limit)
+            query = select(ProductOrm)
+            if sorting.desc:
+                query = query.order_by(
+                    getattr(ProductOrm, sorting.field.value).desc())
+            else:
+                query = query.order_by(
+                    getattr(ProductOrm, sorting.field.value).asc())
+
+            query = query.offset(padding.get_offset()).limit(padding.by)
+
             result = await session.execute(query)
             product_shchemas = [SProduct.model_validate(
                 product_model) for product_model in result.scalars().all()]
 
-            return SProductList(products=product_shchemas, count=count)
+            return SProductList(products=product_shchemas, total_count=total_count)
 
     @classmethod
     async def update_one(cls, id: int, data: dict) -> SResponseUpdate:
