@@ -2,7 +2,7 @@ from decimal import Decimal
 from typing import Annotated, Optional
 from sqlalchemy import Numeric, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from datetime import datetime
+from datetime import date
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
 str_50 = Annotated[str, 50]
@@ -39,9 +39,9 @@ class ProductOrm(Base):
     price: Mapped[Optional[num_9_2]]
     model: Mapped[Optional[str_255]]
     is_purchased: Mapped[bool]
-    buy_date: Mapped[Optional[datetime]]
+    buy_date: Mapped[Optional[date]]
     guarantee: Mapped[int]
-    guarantee_end_date: Mapped[Optional[datetime]]
+    guarantee_end_date: Mapped[Optional[date]]
     receipt: Mapped[Optional[str]]
     shop: Mapped[Optional[str_255]]
     priority: Mapped[Optional[int]]
