@@ -12,8 +12,7 @@ class SProductAdd(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str_50 = Field(min_length=1, max_length=50)
-    price: Optional[num_9_2] = Field(
-        None, max_digits=9, decimal_places=2, gt=0)
+    price: Optional[num_9_2] = Field(None, max_digits=9, decimal_places=2, gt=0)
     model: Optional[str_255] = Field(None, max_length=255)
     is_purchased: bool = False
     guarantee: int = Field(0, ge=0)
@@ -24,11 +23,11 @@ class SProductAdd(BaseModel):
     priority: Optional[int] = Field(None, ge=0)
 
     def auto_generate_fields(self) -> dict:
-        if (self.buy_date is not None and
-                self.guarantee is not None):
-            self.guarantee_end_date = self.buy_date + \
-                relativedelta(months=+self.guarantee)
-            return {'guarantee_end_date': self.guarantee_end_date}
+        if self.buy_date is not None and self.guarantee is not None:
+            self.guarantee_end_date = self.buy_date + relativedelta(
+                months=+self.guarantee
+            )
+            return {"guarantee_end_date": self.guarantee_end_date}
 
         return {}
 
@@ -45,25 +44,29 @@ class SProductEdit(SProductAdd):
     name: Optional[str_50] = Field(None, min_length=1, max_length=50)
 
     def auto_generate_fields(self, product_in_db: SProduct):
-        buy_date = self.buy_date if self.buy_date is not None else product_in_db.buy_date
-        guarantee = self.guarantee if self.guarantee is not None else product_in_db.guarantee
+        buy_date = (
+            self.buy_date if self.buy_date is not None else product_in_db.buy_date
+        )
+        guarantee = (
+            self.guarantee if self.guarantee is not None else product_in_db.guarantee
+        )
 
-        if (buy_date is not None and
-                guarantee is not None):
-            guarantee_end_date = buy_date + \
-                relativedelta(months=+guarantee)
+        if buy_date is not None and guarantee is not None:
+            guarantee_end_date = buy_date + relativedelta(months=+guarantee)
             if guarantee_end_date != product_in_db.guarantee_end_date:
                 self.guarantee_end_date = guarantee_end_date
-                return {'guarantee_end_date': guarantee_end_date}
+                return {"guarantee_end_date": guarantee_end_date}
 
         return {}
 
     def get_edit_fields(self):
         edit_fields = self.model_dump()
 
-        edit_fields = {key: edit_fields[key]
-                       for key in edit_fields.keys()
-                       if key != 'id' and not edit_fields[key] is None}
+        edit_fields = {
+            key: edit_fields[key]
+            for key in edit_fields.keys()
+            if key != "id" and not edit_fields[key] is None
+        }
 
         return edit_fields
 
@@ -91,13 +94,13 @@ class SPagination(BaseModel):
 
 
 class ProductSortingField(Enum):
-    id = 'id'
-    name = 'name'
-    buy_date = 'buy_date'
-    guarantee = 'guarantee'
-    guarantee_end_date = 'guarantee_end_date'
-    shop = 'shop'
-    priority = 'priority'
+    id = "id"
+    name = "name"
+    buy_date = "buy_date"
+    guarantee = "guarantee"
+    guarantee_end_date = "guarantee_end_date"
+    shop = "shop"
+    priority = "priority"
 
 
 class SSort(BaseModel):

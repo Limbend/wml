@@ -1,7 +1,16 @@
 import logging
 from sqlalchemy import func, select, update
 
-from schemas import SProductAdd, SProductEdit, SProduct, SProductList, SResponseAdd, SResponseUpdate, SPagination, SSort
+from schemas import (
+    SProductAdd,
+    SProductEdit,
+    SProduct,
+    SProductList,
+    SResponseAdd,
+    SResponseUpdate,
+    SPagination,
+    SSort,
+)
 from models import ProductOrm
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
@@ -12,7 +21,7 @@ from config import settings
 logger = logging.getLogger(__name__)
 engine = create_async_engine(
     settings.db.connection_url,
-    echo=True,
+    echo=settings.db.echo,
 )
 new_session = async_sessionmaker(engine, expire_on_commit=False)
 
@@ -27,7 +36,9 @@ class ProductRepo:
             session.add(product)
             await session.flush()
             await session.commit()
-            return SResponseAdd(product_id=product.id, auto_generated_fields=auto_generated_fields)
+            return SResponseAdd(
+                product_id=product.id, auto_generated_fields=auto_generated_fields
+            )
 
     @classmethod
     async def get_list(cls, padding: SPagination, sorting: SSort) -> SProductList:
@@ -38,17 +49,17 @@ class ProductRepo:
 
             query = select(ProductOrm)
             if sorting.desc:
-                query = query.order_by(
-                    getattr(ProductOrm, sorting.field.value).desc())
+                query = query.order_by(getattr(ProductOrm, sorting.field.value).desc())
             else:
-                query = query.order_by(
-                    getattr(ProductOrm, sorting.field.value).asc())
+                query = query.order_by(getattr(ProductOrm, sorting.field.value).asc())
 
             query = query.offset(padding.get_offset()).limit(padding.by)
 
             result = await session.execute(query)
-            product_shchemas = [SProduct.model_validate(
-                product_model) for product_model in result.scalars().all()]
+            product_shchemas = [
+                SProduct.model_validate(product_model)
+                for product_model in result.scalars().all()
+            ]
 
             return SProductList(products=product_shchemas, total_count=total_count)
 
@@ -64,8 +75,7 @@ class ProductRepo:
             edit_fields = product.get_edit_fields()
             updated_product = product_in_db.model_copy(update=edit_fields)
 
-            query = update(ProductOrm).values(
-                **edit_fields).filter_by(id=product.id)
+            query = update(ProductOrm).values(**edit_fields).filter_by(id=product.id)
             # logger.info(query.compile(compile_kwargs={'literal_binds': True}))
             await session.execute(query)
 

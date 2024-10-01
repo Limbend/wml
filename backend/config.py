@@ -9,6 +9,7 @@ class DatabaseConfig(BaseModel):
     name: str
     user: str
     password: str
+    echo: bool = True
 
     @property
     def connection_url(self):
@@ -28,14 +29,16 @@ class Settings(BaseSettings):
 
     @property
     def logging_config(self):
-        log_dir = './logs'
+        log_dir = "./logs"
         os.makedirs(log_dir, exist_ok=True)
 
         return {
             "version": 1,
             "disable_existing_loggers": True,
             "formatters": {
-                "standard": {"format": "%(asctime)-23s - %(levelname)-8s - %(name)-24s - %(message)s"},
+                "standard": {
+                    "format": "%(asctime)-23s - %(levelname)-8s - %(name)-24s - %(message)s"
+                },
             },
             "handlers": {
                 "default": {
@@ -48,20 +51,20 @@ class Settings(BaseSettings):
                     "level": "INFO",
                     "formatter": "standard",
                     "class": "logging.handlers.RotatingFileHandler",
-                    'filename': f'{log_dir}/wml.info.log',
-                    'mode': 'a',
-                    'maxBytes': 1048576,
-                    'backupCount': 3
-                }
+                    "filename": f"{log_dir}/wml.info.log",
+                    "mode": "a",
+                    "maxBytes": 1048576,
+                    "backupCount": 3,
+                },
             },
             "loggers": {
                 "": {  # root logger
-                    "level":  "INFO",
+                    "level": "INFO",
                     "handlers": ["default", "info_rotating_file_handler"],
                     "propagate": False,
                 },
                 "repository": {
-                    "level":  "INFO",
+                    "level": "INFO",
                     "handlers": ["default", "info_rotating_file_handler"],
                     "propagate": False,
                 },
