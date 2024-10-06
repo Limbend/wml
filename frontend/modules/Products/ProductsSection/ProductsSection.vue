@@ -1,23 +1,28 @@
-<script setup>
-import { initialTableColumns } from '../data';
+<script setup lang="ts">
+import LaunchService from '~/services/ProductsServices/ProductsService';
 
-const products = ref([]);
+const products = await LaunchService.getAll({});
+
+// POPOVER
+const addPopover = ref(false);
 </script>
 
 <template>
   <section>
-    <p>Таблица с продуктами</p>
-    <DataTable :value="products">
-      <Column v-for="column in initialTableColumns" :header="column.header" :field="column.field" />
+    <div class="flex justify-between items-center mb-4">
+      <h1>Список покупок</h1>
 
-      <template #empty>
-        <div class="w-full flex gap-3 justify-center">
-          <div class="border-solid border rounded flex gap-3 items-center p-4">
-            <i class="pi pi-folder-open"></i>
-            <p>Список товаров пуст</p>
-          </div>
-        </div>
-      </template>
-    </DataTable>
+      <Button icon="pi pi-plus" label="Создать" outlined @click="addPopover = true" />
+    </div>
+
+    <ProductsTable :products="products.data.value.products || []" />
+
+    <Drawer
+      v-model:visible="addPopover"
+      header="Создать покупку"
+      position="right"
+      class="!w-full md:!w-[70%] lg:!w-[40%]">
+      <ProductPopover />
+    </Drawer>
   </section>
 </template>
