@@ -6,6 +6,7 @@ from schemas import (
     SProductEdit,
     SProduct,
     SProductList,
+    SResponse,
     SResponseAdd,
     SResponseUpdate,
     SPagination,
@@ -41,13 +42,21 @@ class ProductRepo:
             )
 
     @classmethod
+    async def hide_one(cls, product_id: int) -> SResponse:
+        async with new_session() as session:
+            query = update(ProductOrm).values(is_hidden=True).filter_by(id=product_id)
+            await session.execute(query)
+            await session.commit()
+        return SResponse()
+
+    @classmethod
     async def get_list(cls, padding: SPagination, sorting: SSort) -> SProductList:
         async with new_session() as session:
-            query = select(func.count(ProductOrm.id))
+            query = select(func.count(ProductOrm.id)).filter_by(is_hidden=False)
             result = await session.execute(query)
             total_count = result.scalar()
 
-            query = select(ProductOrm)
+            query = select(ProductOrm).filter_by(is_hidden=False)
             if sorting.desc:
                 query = query.order_by(getattr(ProductOrm, sorting.field.value).desc())
             else:

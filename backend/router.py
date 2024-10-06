@@ -7,6 +7,7 @@ from schemas import (
     SPagination,
     SProductAdd,
     SProductList,
+    SResponse,
     SResponseAdd,
     SResponseUpdate,
     SSort,
@@ -26,6 +27,12 @@ async def get_products(
 @router.post("")
 async def add_products(product: Annotated[SProductAdd, Body()]) -> SResponseAdd:
     resolve = await ProductRepo.add_one(product)
+    return resolve
+
+
+@router.delete("")
+async def del_products(product_id: int) -> SResponse:
+    resolve = await ProductRepo.hide_one(product_id=product_id)
     return resolve
 
 

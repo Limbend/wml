@@ -12,15 +12,16 @@ class SProductAdd(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str_50 = Field(min_length=1, max_length=50)
-    price: Optional[num_9_2] = Field(None, max_digits=9, decimal_places=2, gt=0)
     model: Optional[str_255] = Field(None, max_length=255)
+    price: Optional[num_9_2] = Field(None, max_digits=9, decimal_places=2, gt=0)
     is_purchased: bool = False
-    guarantee: int = Field(0, ge=0)
     buy_date: Optional[date] = None
+    guarantee: int = Field(0, ge=0)
     guarantee_end_date: SkipJsonSchema[date] = None
     receipt: Optional[str] = None
     shop: Optional[str_255] = Field(None, max_length=255)
-    priority: Optional[int] = Field(None, ge=0)
+    priority: Optional[int] = Field(5, ge=1, le=10)
+    is_hidden: SkipJsonSchema[bool] = False
 
     def auto_generate_fields(self) -> dict:
         if self.buy_date is not None and self.guarantee is not None:
@@ -35,13 +36,14 @@ class SProductAdd(BaseModel):
 class SProduct(SProductAdd):
     id: int = Field(gt=0)
     guarantee_end_date: Optional[date] = None
+    is_hidden: bool = False
 
 
 class SProductEdit(SProductAdd):
     id: int = Field(gt=0)
-    guarantee: Optional[int] = Field(None, ge=0)
-    is_purchased: Optional[bool] = None
     name: Optional[str_50] = Field(None, min_length=1, max_length=50)
+    is_purchased: Optional[bool] = None
+    guarantee: Optional[int] = Field(None, ge=0)
 
     def auto_generate_fields(self, product_in_db: SProduct):
         buy_date = (

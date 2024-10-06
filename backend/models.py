@@ -36,8 +36,8 @@ class ProductOrm(Base):
 
     id: Mapped[intpk]
     name: Mapped[str_50]
-    price: Mapped[Optional[num_9_2]]
     model: Mapped[Optional[str_255]]
+    price: Mapped[Optional[num_9_2]]
     is_purchased: Mapped[bool]
     buy_date: Mapped[Optional[date]]
     guarantee: Mapped[int]
@@ -45,3 +45,4 @@ class ProductOrm(Base):
     receipt: Mapped[Optional[str]]
     shop: Mapped[Optional[str_255]]
     priority: Mapped[Optional[int]]
+    is_hidden: Mapped[bool]
