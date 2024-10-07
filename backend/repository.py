@@ -30,15 +30,14 @@ new_session = async_sessionmaker(engine, expire_on_commit=False)
 class ProductRepo:
     @classmethod
     async def add_one(cls, data: SProductAdd) -> SResponseAdd:
-        auto_generated_fields = data.auto_generate_fields()
-
         async with new_session() as session:
             product = ProductOrm(**data.model_dump())
             session.add(product)
             await session.flush()
             await session.commit()
             return SResponseAdd(
-                product_id=product.id, auto_generated_fields=auto_generated_fields
+                product_id=product.id,
+                auto_generated_fields=data.generated_fields,
             )
 
     @classmethod

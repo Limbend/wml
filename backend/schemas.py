@@ -16,27 +16,39 @@ class SProductAdd(BaseModel):
     price: Optional[num_9_2] = Field(None, max_digits=9, decimal_places=2, gt=0)
     is_purchased: bool = False
     buy_date: Optional[date] = None
-    guarantee: int = Field(0, ge=0)
+    guarantee: int = Field(None, ge=0)
     guarantee_end_date: SkipJsonSchema[date] = None
     receipt: Optional[str] = None
     shop: Optional[str_255] = Field(None, max_length=255)
-    priority: int = Field(5, ge=1, le=10)
+    priority: int = Field(None, ge=1, le=10)
     is_hidden: SkipJsonSchema[bool] = False
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.auto_generate_fields()
 
     def auto_generate_fields(self) -> dict:
         fields = {}
-        if self.guarantee == 0:
-            fields.update({"guarantee": 0})
-        if self.priority == 5:
-            fields.update({"priority": 5})
+        if self.guarantee is None:
+            self.guarantee = 0
+            fields.update({"guarantee": self.guarantee})
+        if self.priority is None:
+            self.priority = 5
+            fields.update({"priority": self.priority})
 
-        if self.buy_date is not None and self.guarantee is not None:
+        if self.buy_date is not None:
             self.guarantee_end_date = self.buy_date + relativedelta(
                 months=+self.guarantee
             )
             fields.update({"guarantee_end_date": self.guarantee_end_date})
 
-        return fields
+        self._generated_fields_ = fields
+
+        return self._generated_fields_
+
+    @property
+    def generated_fields(self):
+        return self._generated_fields_
 
 
 class SProduct(SProductAdd):
@@ -50,8 +62,13 @@ class SProductEdit(SProductAdd):
     name: Optional[str_50] = Field(None, min_length=1, max_length=50)
     is_purchased: Optional[bool] = None
     guarantee: Optional[int] = Field(None, ge=0)
+    priority: Optional[int] = Field(None, ge=1, le=10)
+
+    def __init__(self, **kwargs):
+        BaseModel.__init__(self, **kwargs)
 
     def auto_generate_fields(self, product_in_db: SProduct):
+        fields = {}
         buy_date = (
             self.buy_date if self.buy_date is not None else product_in_db.buy_date
         )
@@ -63,9 +80,10 @@ class SProductEdit(SProductAdd):
             guarantee_end_date = buy_date + relativedelta(months=+guarantee)
             if guarantee_end_date != product_in_db.guarantee_end_date:
                 self.guarantee_end_date = guarantee_end_date
-                return {"guarantee_end_date": guarantee_end_date}
+                fields.update({"guarantee_end_date": self.guarantee_end_date})
 
-        return {}
+        self._generated_fields_ = fields
+        return self._generated_fields_
 
     def get_edit_fields(self):
         edit_fields = self.model_dump()
