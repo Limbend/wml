@@ -1,5 +1,6 @@
 from decimal import Decimal
 from typing import Annotated, Optional
+from pydantic import PlainSerializer
 from sqlalchemy import Numeric, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import date
@@ -7,7 +8,9 @@ from datetime import date
 intpk = Annotated[int, mapped_column(primary_key=True)]
 str_50 = Annotated[str, 50]
 str_255 = Annotated[str, 255]
-num_9_2 = Annotated[Decimal, 9]
+num_9_2 = Annotated[
+    Decimal, PlainSerializer(lambda x: float(x), return_type=float, when_used="json")
+]
 
 
 class Base(DeclarativeBase):
