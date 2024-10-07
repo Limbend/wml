@@ -1,4 +1,5 @@
 import Lara from '@primevue/themes/lara';
+import { configure } from 'vee-validate';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -14,7 +15,17 @@ export default defineNuxtConfig({
   typescript: {
     typeCheck: true
   },
-  modules: ['@primevue/nuxt-module', '@nuxtjs/tailwindcss'],
+  modules: [
+    '@primevue/nuxt-module',
+    '@nuxtjs/tailwindcss',
+    [
+      '@vee-validate/nuxt',
+      {
+        autoImports: true
+      }
+    ]
+  ],
+  plugins: ['~/plugins/VeeValidateConfig.ts'],
   primevue: {
     options: {
       theme: {
