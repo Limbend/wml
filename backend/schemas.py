@@ -20,17 +20,23 @@ class SProductAdd(BaseModel):
     guarantee_end_date: SkipJsonSchema[date] = None
     receipt: Optional[str] = None
     shop: Optional[str_255] = Field(None, max_length=255)
-    priority: Optional[int] = Field(5, ge=1, le=10)
+    priority: int = Field(5, ge=1, le=10)
     is_hidden: SkipJsonSchema[bool] = False
 
     def auto_generate_fields(self) -> dict:
+        fields = {}
+        if self.guarantee == 0:
+            fields.update({"guarantee": 0})
+        if self.priority == 5:
+            fields.update({"priority": 5})
+
         if self.buy_date is not None and self.guarantee is not None:
             self.guarantee_end_date = self.buy_date + relativedelta(
                 months=+self.guarantee
             )
-            return {"guarantee_end_date": self.guarantee_end_date}
+            fields.update({"guarantee_end_date": self.guarantee_end_date})
 
-        return {}
+        return fields
 
 
 class SProduct(SProductAdd):

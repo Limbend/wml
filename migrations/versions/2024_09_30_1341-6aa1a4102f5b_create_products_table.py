@@ -33,7 +33,7 @@ def upgrade() -> None:
         sa.Column("guarantee_end_date", sa.Date(), nullable=True),
         sa.Column("receipt", sa.String(), nullable=True),
         sa.Column("shop", sa.String(length=255), nullable=True),
-        sa.Column("priority", sa.Integer(), nullable=True),
+        sa.Column("priority", sa.Integer(), nullable=False),
         sa.Column("is_hidden", sa.Boolean(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
         schema="backend",

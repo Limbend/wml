@@ -44,5 +44,5 @@ class ProductOrm(Base):
     guarantee_end_date: Mapped[Optional[date]]
     receipt: Mapped[Optional[str]]
     shop: Mapped[Optional[str_255]]
-    priority: Mapped[Optional[int]]
+    priority: Mapped[int]
     is_hidden: Mapped[bool]
