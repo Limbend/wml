@@ -97,17 +97,12 @@ class SProductEdit(SProductAdd):
         return edit_fields
 
 
-class SResponse(BaseModel):
-    ok: bool = True
-    message: Optional[str] = None
-
-
-class SResponseAdd(SResponse):
+class SResponseAdd(BaseModel):
     product_id: Optional[int] = None
     auto_generated_fields: dict = {}
 
 
-class SResponseUpdate(SResponse):
+class SResponseUpdate(BaseModel):
     updated_product: Optional[SProduct] = None
 
 
