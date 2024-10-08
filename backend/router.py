@@ -3,12 +3,12 @@ from fastapi import APIRouter, Body, Depends
 
 from repository import ProductRepo
 from schemas import (
+    SBaseResponse,
     SProductEdit,
     SPagination,
     SProductAdd,
-    SProductList,
-    SResponse,
     SResponseAdd,
+    SResponseGet,
     SResponseUpdate,
     SSort,
 )
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/products", tags=["products"])
 @router.get("")
 async def get_products(
     padding: Annotated[SPagination, Depends()], sorting: Annotated[SSort, Depends()]
-) -> SProductList:
+) -> SResponseGet:
     products = await ProductRepo.get_list(padding, sorting)
     return products
 
@@ -31,7 +31,7 @@ async def add_products(product: Annotated[SProductAdd, Body()]) -> SResponseAdd:
 
 
 @router.delete("")
-async def del_products(product_id: int) -> SResponse:
+async def del_products(product_id: int) -> SBaseResponse:
     resolve = await ProductRepo.hide_one(product_id=product_id)
     return resolve
 

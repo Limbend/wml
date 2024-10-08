@@ -2,14 +2,14 @@ import logging
 from sqlalchemy import func, select, update
 
 from schemas import (
+    SBaseResponse,
     SProductAdd,
     SProductEdit,
     SProduct,
-    SProductList,
-    SResponse,
-    SResponseAdd,
-    SResponseUpdate,
     SPagination,
+    SResponseAdd,
+    SResponseGet,
+    SResponseUpdate,
     SSort,
 )
 from models import ProductOrm
@@ -36,20 +36,22 @@ class ProductRepo:
             await session.flush()
             await session.commit()
             return SResponseAdd(
-                product_id=product.id,
-                auto_generated_fields=data.generated_fields,
+                content=SResponseAdd.ContentAdd(
+                    product_id=product.id,
+                    auto_generated_fields=data.generated_fields,
+                )
             )
 
     @classmethod
-    async def hide_one(cls, product_id: int) -> SResponse:
+    async def hide_one(cls, product_id: int) -> SBaseResponse:
         async with new_session() as session:
             query = update(ProductOrm).values(is_hidden=True).filter_by(id=product_id)
             await session.execute(query)
             await session.commit()
-        return SResponse()
+        return SBaseResponse()
 
     @classmethod
-    async def get_list(cls, padding: SPagination, sorting: SSort) -> SProductList:
+    async def get_list(cls, padding: SPagination, sorting: SSort) -> SResponseGet:
         async with new_session() as session:
             query = select(func.count(ProductOrm.id)).filter_by(is_hidden=False)
             result = await session.execute(query)
@@ -69,7 +71,7 @@ class ProductRepo:
                 for product_model in result.scalars().all()
             ]
 
-            return SProductList(products=product_shchemas, total_count=total_count)
+            return SResponseGet(total_count=total_count, content=product_shchemas)
 
     @classmethod
     async def edit_one(cls, product: SProductEdit) -> SResponseUpdate:
@@ -89,4 +91,4 @@ class ProductRepo:
 
             await session.commit()
 
-        return SResponseUpdate(updated_product=updated_product)
+        return SResponseUpdate(content=updated_product)

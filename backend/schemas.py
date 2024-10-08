@@ -97,18 +97,26 @@ class SProductEdit(SProductAdd):
         return edit_fields
 
 
-class SResponse(BaseModel):
+class SBaseResponse(BaseModel):
     ok: bool = True
     message: Optional[str] = None
 
 
-class SResponseAdd(SResponse):
-    product_id: Optional[int] = None
-    auto_generated_fields: dict = {}
+class SResponseAdd(SBaseResponse):
+    class ContentAdd(BaseModel):
+        product_id: Optional[int] = None
+        auto_generated_fields: dict = {}
+
+    content: ContentAdd
 
 
-class SResponseUpdate(SResponse):
-    updated_product: Optional[SProduct] = None
+class SResponseUpdate(SBaseResponse):
+    content: Optional[SProduct] = None
+
+
+class SResponseGet(SBaseResponse):
+    total_count: Optional[int] = None
+    content: Optional[list[SProduct]] = None
 
 
 class SPagination(BaseModel):
@@ -132,8 +140,3 @@ class ProductSortingField(Enum):
 class SSort(BaseModel):
     field: Optional[ProductSortingField] = ProductSortingField.id
     desc: Optional[bool] = False
-
-
-class SProductList(BaseModel):
-    products: list[SProduct]
-    total_count: int
