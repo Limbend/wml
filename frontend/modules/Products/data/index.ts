@@ -3,10 +3,10 @@ import type { IProduct } from '~/types/Products/Products.types.ts';
 export const initialTableColumns: { field: keyof IProduct; header: string }[] = [
   { field: 'is_purchased', header: 'Приобретено' },
   { field: 'name', header: 'Наименование' },
-  { field: 'price', header: 'Цена' },
+  { field: 'price', header: 'Цена, ₽' },
   { field: 'model', header: 'Модель' },
   { field: 'buy_date', header: 'Дата покупки' },
-  { field: 'guarantee', header: 'Гарантийный срок' },
+  { field: 'guarantee', header: 'Гарантийный срок, месяц' },
   { field: 'guarantee_end_date', header: 'Окончание гарантии' },
   { field: 'receipt', header: 'Чек' },
   { field: 'shop', header: 'Магазин' },
@@ -15,16 +15,16 @@ export const initialTableColumns: { field: keyof IProduct; header: string }[] = 
 ];
 
 export const initialProduct: IProduct = {
-  id: 0,
-  name: '',
-  price: null,
-  model: '',
+  id: undefined,
+  name: 'Стаканчик',
+  price: 123,
+  model: 'Пластиковый',
   is_purchased: false,
-  buy_date: null,
-  guarantee: null,
-  guarantee_end_date: null,
+  buy_date: undefined,
+  guarantee: undefined,
+  guarantee_end_date: undefined,
   receipt: '',
   shop: '',
-  priority: 1,
-  tags: null
+  priority: 5
+  /* tags: undefined // строка любая */
 };
