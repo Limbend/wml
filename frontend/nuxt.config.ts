@@ -1,5 +1,5 @@
 import Lara from '@primevue/themes/lara';
-import { configure } from 'vee-validate';
+import { ariaLocaleRu, localeRu } from './assets/styles/primeVue/localization';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -30,6 +30,12 @@ export default defineNuxtConfig({
     options: {
       theme: {
         preset: Lara
+      },
+      locale: {
+        ...localeRu,
+        aria: {
+          ...ariaLocaleRu
+        }
       }
     },
     autoImport: false
