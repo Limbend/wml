@@ -1,0 +1,33 @@
+[tool.pytest.ini_options]
+pythonpath = [
+  ".", "backend",
+]
+asyncio_mode="auto"
+
+[tool.poetry]
+name = "wml"
+package-mode = false
+version = "0.1.0"
+description = ""
+authors = ["Limbend <termir988@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+alembic = "^1.13.3"
+asyncpg = "^0.29.0"
+fastapi = "^0.115.0"
+uvicorn = "^0.31.1"
+sqlalchemy = "^2.0.35"
+python-dateutil = "^2.9.0.post0"
+gunicorn = "^23.0.0"
+pydantic-settings = "^2.5.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-asyncio = "^0.24.0"
+black = "^24.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
