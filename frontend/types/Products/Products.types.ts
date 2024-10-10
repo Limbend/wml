@@ -1,14 +1,23 @@
+import type { IBaseResponse } from '~/types/responses/Responses.types';
+
 export interface IProduct {
-  id: number;
+  id?: number;
   name: string;
-  price?: number | null;
-  model?: string | null;
+  price?: number;
+  model?: string;
   is_purchased?: boolean;
-  buy_date?: Date | null;
-  guarantee?: number | null;
-  guarantee_end_date?: Date | null;
-  receipt?: string | null;
-  shop?: string | null;
-  priority?: number | null;
-  tags?: string[] | null;
+  buy_date?: Date | string;
+  guarantee?: number;
+  guarantee_end_date?: Date;
+  receipt?: string;
+  shop?: string;
+  priority?: number;
+  tags?: string[];
+}
+
+export interface IProductResponse extends IBaseResponse {
+  content:
+    | IProduct
+    | { product_id: number; auto_generated_fields?: Record<string, string> }
+    | IProduct[];
 }

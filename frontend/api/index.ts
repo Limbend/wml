@@ -20,6 +20,6 @@ export const patch = async <T extends Record<string, any>>(url: string, body: T)
   return await useFetch(`${baseUrl}${url}`, { method: 'PATCH', body });
 };
 
-export const del = async (url: string) => {
-  return await useFetch(`${baseUrl}${url}`, { method: 'DELETE' });
+export const del = async (url: string, params: IRequestParams = {}) => {
+  return await useFetch(`${baseUrl}${url}`, { method: 'DELETE', params });
 };

@@ -46,5 +46,7 @@ export const localeRu = {
 
 export const ariaLocaleRu = {
   trueLabel: 'Верно',
-  falseLabel: 'Неверно'
+  falseLabel: 'Неверно',
+  close: 'Отмена',
+  reject: 'Нет'
 };
