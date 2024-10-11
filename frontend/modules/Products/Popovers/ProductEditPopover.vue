@@ -4,25 +4,35 @@ import type { IProduct } from '~/types/Products/Products.types';
 import ProductService from '~/services/ProductsServices/ProductsService';
 import type { TStatus } from '~/types/index.types';
 
-const emit = defineEmits(['onCreate']);
+type Props = {
+  productToEdit?: IProduct;
+};
+
+defineProps<Props>();
+
+const emits = defineEmits(['onEdit', 'onDelete']);
 
 const loading = ref<TStatus | undefined>(undefined);
 
 const onSubmit = async (formData: IProduct) => {
   loading.value = 'loading';
-  const { data, status } = await ProductService.createProduct(formData);
+  const { data, status } = await ProductService.editProduct(formData);
   loading.value = status.value;
-  if ('product_id' in data.value.content) {
+  if ('id' in data.value?.content) {
     const newProduct = {
       ...formData,
-      ...data.value?.content.auto_generated_fields,
-      id: data.value.content.product_id
+      ...data.value?.content
     };
-    emit('onCreate', newProduct);
+
+    emits('onEdit', newProduct);
   }
 };
 </script>
 
 <template>
-  <ProductPopover :loading="loading" @submit="onSubmit" />
+  <ProductPopover
+    :loading="loading"
+    :productToEdit="productToEdit"
+    @submit="onSubmit"
+    @delete="(id: number) => $emit('onDelete', id)" />
 </template>

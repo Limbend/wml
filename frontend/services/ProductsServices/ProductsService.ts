@@ -24,7 +24,7 @@ const launchApi = {
   },
 
   async delete(params: IProductApiParams) {
-    return await del('/product', params);
+    return await del('/products', params);
   }
 };
 
