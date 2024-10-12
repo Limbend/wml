@@ -13,7 +13,7 @@ type Props = {
 
 const props = defineProps<Props>();
 
-const emits = defineEmits(['submit']);
+const emits = defineEmits(['submit', 'delete']);
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -56,13 +56,24 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
 
 <template>
   <Form class="w-full flex flex-col" novalidate @submit="onSubmit">
-    <div class="flex flex-col gap-y-7 mb-5">
-      <div class="flex items-center gap-2 mb-2">
-        <Checkbox v-model="purchased" inputId="purchased" :binary="true" />
-        <label for="purchased" class="ml-1 cursor-pointer">Приобретено</label>
+    <div class="flex flex-col gap-y-5 mb-5">
+      <div class="w-full flex justify-between pt-1">
+        <div class="flex items-center gap-2 mb-2">
+          <Checkbox v-model="purchased" inputId="purchased" :binary="true" />
+          <label for="purchased" class="ml-1 cursor-pointer">Приобретено</label>
+        </div>
+        <Button
+          v-if="productToEdit?.id"
+          icon="pi pi-trash"
+          aria-label="Delete"
+          label="Удалить"
+          severity="danger"
+          size="small"
+          text
+          @click="$emit('delete', productToEdit?.id)" />
       </div>
       <div class="flex flex-col gap-y-1">
-        <FloatLabel>
+        <FloatLabel variant="on">
           <InputText
             class="w-full"
             :class="submitCount && errors.name && 'p-invalid'"
@@ -77,7 +88,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
       </div>
 
       <div class="flex flex-col gap-y-1">
-        <FloatLabel>
+        <FloatLabel variant="on">
           <InputNumber
             class="w-full"
             :class="submitCount && errors.price && 'p-invalid'"
@@ -96,7 +107,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
       </div>
 
       <div class="flex flex-col gap-y-1">
-        <FloatLabel>
+        <FloatLabel variant="on">
           <InputText
             class="w-full"
             type="text"
@@ -111,7 +122,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
       </div>
 
       <div class="flex flex-col gap-y-1">
-        <FloatLabel>
+        <FloatLabel variant="on">
           <DatePicker
             dateFormat="dd.mm.yy"
             class="w-full"
@@ -130,7 +141,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
       </div>
 
       <div class="flex flex-col gap-y-1">
-        <FloatLabel>
+        <FloatLabel variant="on">
           <InputNumber
             class="w-full"
             :class="submitCount && errors.guarantee && 'p-invalid'"
@@ -148,7 +159,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
       </div>
 
       <div class="flex flex-col gap-y-1">
-        <FloatLabel>
+        <FloatLabel variant="on">
           <InputNumber
             v-model="priority"
             id="product-priority"
@@ -171,7 +182,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
       </div>
 
       <div class="flex flex-col gap-y-1">
-        <FloatLabel>
+        <FloatLabel variant="on">
           <InputText
             class="w-full"
             :class="submitCount && errors.shop && 'p-invalid'"

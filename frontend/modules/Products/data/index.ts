@@ -1,7 +1,6 @@
 import type { IProduct } from '~/types/Products/Products.types.ts';
 
 export const initialTableColumns: { field: keyof IProduct; header: string }[] = [
-  { field: 'is_purchased', header: 'Приобретено' },
   { field: 'name', header: 'Наименование' },
   { field: 'price', header: 'Цена, ₽' },
   { field: 'model', header: 'Модель' },
