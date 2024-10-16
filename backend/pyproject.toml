@@ -1,6 +1,6 @@
 [tool.pytest.ini_options]
 pythonpath = [
-  ".", "backend",
+  ".", "api",
 ]
 asyncio_mode="auto"
 

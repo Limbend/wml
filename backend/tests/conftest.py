@@ -6,15 +6,15 @@ from fastapi.testclient import TestClient
 
 from httpx import ASGITransport, AsyncClient
 
-from backend.main import app
+from api.main import app
 
 
 # import asyncio
 # from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 # from sqlalchemy.pool import NullPool
 
-# from backend.config import settings
-# from backend.repository import new_session
+# from api.config import settings
+# from api.repository import new_session
 
 
 # engine_test = create_async_engine(

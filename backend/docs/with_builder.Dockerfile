@@ -13,7 +13,7 @@ COPY --from=builder /app/wheels ./wheels
 COPY --from=builder /app/requirements.txt .
 RUN pip install --no-cache ./wheels/*
 
-ADD ./ ./
+ADD . .
 
-WORKDIR /app/backend/
+WORKDIR /app/api/
 CMD ["gunicorn", "main:app", "--workers", "1", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind=0.0.0.0:8000"]

@@ -6,11 +6,11 @@ import os
 import sys
 
 sys.path.append(os.path.join(sys.path[0], ".."))
-sys.path.append(os.path.join(sys.path[0], "../backend"))
+sys.path.append(os.path.join(sys.path[0], "../api"))
 
-from backend.config import settings
-from backend.repository import ProductRepo
-from backend.schemas import SPagination, SProductAdd, SSort
+from api.config import settings
+from api.repository import ProductRepo
+from api.schemas import SPagination, SProductAdd, SSort
 
 
 lc.dictConfig(settings.logging_config)

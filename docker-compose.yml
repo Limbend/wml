@@ -19,9 +19,9 @@ services:
 
   wml_backend_api:
     build:
-      context: .
+      context: ./backend
     container_name: wml_backend_api
-    command: ["/app/backend/docker/dev.app.sh"]
+    command: ["/app/api/docker/dev.app.sh"]
     environment:
       BACKEND__DB__HOST: wml_db
       BACKEND__DB__PORT: ${BACKEND__DB__PORT:-1212}
