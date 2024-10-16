@@ -1,24 +1,22 @@
 # Not public
 *.np.*
-/.env
+***.env
 
-# Py
-venv/
-.venv/
-__pycache__/
+# Python
+**/__pycache__/
+**/.pytest_cache/
 
 # VS Code
 .vscode/
 .vs/
-.pytest_cache/
 
-# Jupyter notebook
+# Jupyter Notebook
 **/.ipynb_checkpoints/
 *checkpoint.ipynb
 
 # Log files
-/logs
-*.log
+**/logs
+***.log
 
-# temp files
+# Temp files
 temp/
