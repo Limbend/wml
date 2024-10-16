@@ -9,10 +9,10 @@ export interface IProduct {
   buy_date?: Date | string;
   guarantee?: number;
   guarantee_end_date?: Date;
-  receipt?: string;
+  // receipt?: string;
   shop?: string;
   priority?: number;
-  tags?: string[];
+  // tags?: string[];
 }
 
 export interface IProductResponse extends IBaseResponse {
