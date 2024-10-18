@@ -3,17 +3,22 @@ import { ariaLocaleRu, localeRu } from './assets/styles/primeVue/localization';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    public: {
+      apiBase: '',
+    },
+  },
   compatibilityDate: '2024-04-03',
   app: {
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'wml for Maksowny'
-    }
+      title: 'wml for Maksowny',
+    },
   },
   devtools: { enabled: true },
   typescript: {
-    typeCheck: true
+    typeCheck: true,
   },
   modules: [
     '@primevue/nuxt-module',
@@ -21,40 +26,40 @@ export default defineNuxtConfig({
     [
       '@vee-validate/nuxt',
       {
-        autoImports: true
-      }
-    ]
+        autoImports: true,
+      },
+    ],
   ],
   plugins: ['~/plugins/VeeValidateConfig.ts'],
   primevue: {
     options: {
       theme: {
-        preset: Lara
+        preset: Lara,
       },
       locale: {
         ...localeRu,
         aria: {
-          ...ariaLocaleRu
-        }
-      }
+          ...ariaLocaleRu,
+        },
+      },
     },
-    autoImport: false
+    autoImport: false,
   },
   tailwindcss: {
     exposeConfig: true,
-    viewer: true
+    viewer: true,
   },
   css: ['~/assets/styles/tailwind/base.css', '~/assets/styles/main.scss'],
   components: [{ path: '~/modules', pathPrefix: false }, '~/components'],
   vite: {
     css: {
       preprocessorOptions: {
-        scss: { api: 'modern-compiler' }
-      }
+        scss: { api: 'modern-compiler' },
+      },
     },
     build: {
-      sourcemap: true
-    }
+      sourcemap: true,
+    },
   },
-  sourcemap: { server: true, client: false }
+  sourcemap: { server: true, client: false },
 });
