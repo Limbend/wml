@@ -3,7 +3,7 @@ services:
   wml_db:
     image: postgres:17
     container_name: wml_db
-    command: ["-p ${BACKEND__DB__PORT:-1212}"]
+    command: ['-p ${BACKEND__DB__PORT:-1212}']
     environment:
       POSTGRES_DB: ${BACKEND__DB__NAME:-wml}
       POSTGRES_USER: ${BACKEND__DB__USER:-wml}
@@ -21,7 +21,7 @@ services:
     build:
       context: ./backend
     container_name: wml_backend_api
-    command: ["/app/api/docker/dev.app.sh"]
+    command: ['/app/api/docker/dev.app.sh']
     environment:
       BACKEND__DB__HOST: wml_db
       BACKEND__DB__PORT: ${BACKEND__DB__PORT:-1212}
@@ -30,7 +30,7 @@ services:
       BACKEND__DB__NAME: ${BACKEND__DB__NAME:-wml}
       BACKEND__ORIGINS: ${BACKEND__ORIGINS:-[]}
     volumes:
-      - ./logs:/app/backend/logs
+      - ./logs:/app/api/logs
     ports:
       - 8484:8000
     depends_on:
