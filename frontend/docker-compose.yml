@@ -1,0 +1,20 @@
+services:
+  wml_frontend:
+    build:
+      context: .
+      target: dev
+    container_name: wml_frontend
+    environment:
+      # PORT: 3000
+      NUXT_PUBLIC_API_BASE: wml_backend_api:8000
+    volumes:
+      - ./logs:/app/backend/logs
+    ports:
+      - 3434:3000
+    networks:
+      wml-net:
+    restart: unless-stopped
+
+networks:
+  wml-net:
+    external: true
