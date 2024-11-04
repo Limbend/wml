@@ -39,7 +39,7 @@ const [name] = defineField('name');
 const [model] = defineField('model');
 const [price] = defineField('price');
 const [purchased] = defineField('is_purchased');
-const [buy_date] = defineField('buy_date');
+const [buy_date] = defineField('buy_date') as any;
 const [guarantee] = defineField('guarantee');
 const [shop] = defineField('shop');
 const [priority] = defineField('priority');
@@ -138,7 +138,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
           <DatePicker
             dateFormat="dd.mm.yy"
             class="w-full"
-            v-model="buy_date as Date"
+            v-model="buy_date"
             id="product-buy-date"
             :invalid="Boolean(submitCount) && Boolean(errors.buy_date)"
             showIcon
