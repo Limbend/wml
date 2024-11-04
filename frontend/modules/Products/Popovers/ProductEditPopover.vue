@@ -6,6 +6,7 @@ import type { TStatus } from '~/types/index.types';
 
 type Props = {
   productToEdit?: IProduct;
+  visible: Boolean;
 };
 
 defineProps<Props>();
@@ -21,7 +22,7 @@ const onSubmit = async (formData: IProduct) => {
   if ('id' in data.value?.content) {
     const newProduct = {
       ...formData,
-      ...data.value?.content
+      ...data.value?.content,
     };
 
     emits('onEdit', newProduct);
@@ -33,6 +34,8 @@ const onSubmit = async (formData: IProduct) => {
   <ProductPopover
     :loading="loading"
     :productToEdit="productToEdit"
+    :visible="visible"
     @submit="onSubmit"
-    @delete="(id: number) => $emit('onDelete', id)" />
+    @delete="(id: number) => $emit('onDelete', id)"
+  />
 </template>
