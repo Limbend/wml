@@ -52,6 +52,9 @@ export default defineNuxtConfig({
   css: ['~/assets/styles/tailwind/base.css', '~/assets/styles/main.scss'],
   components: [{ path: '~/modules', pathPrefix: false }, '~/components'],
   vite: {
+    define: {
+      'process.env.NUXT_SERVER_BASE': JSON.stringify(process.env.NUXT_SERVER_BASE),
+    },
     css: {
       preprocessorOptions: {
         scss: { api: 'modern-compiler' },
