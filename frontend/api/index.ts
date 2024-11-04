@@ -1,34 +1,27 @@
-let baseUrl = '';
-const serverUrl = process.env.NUXT_SERVER_BASE || '';
-const checkClient = () => {
-  baseUrl = useRuntimeConfig().public.apiBase || serverUrl;
-};
+// устанавливаем baseUrl в зависимости откуда был выполнен запрос CSR || SSR
+const setBaseUrl = () =>
+  useRuntimeConfig().public.apiBase || process.env.NUXT_SSR_API_BASE || '';
 
 interface IRequestParams {
   [key: string]: any;
 }
 
 export const get = async (url: string, params: IRequestParams = {}) => {
-  checkClient();
-  return await useFetch(`${baseUrl}${url}`, { method: 'GET', params });
+  return await useFetch(`${setBaseUrl()}${url}`, { method: 'GET', params });
 };
 
 export const post = async <T extends Record<string, any>>(url: string, body: T) => {
-  checkClient();
-  return await useFetch(`${baseUrl}${url}`, { method: 'POST', body });
+  return await useFetch(`${setBaseUrl()}${url}`, { method: 'POST', body });
 };
 
 export const put = async <T extends Record<string, any>>(url: string, body: T) => {
-  checkClient();
-  return await useFetch(`${baseUrl}${url}`, { method: 'PUT', body });
+  return await useFetch(`${setBaseUrl()}${url}`, { method: 'PUT', body });
 };
 
 export const patch = async <T extends Record<string, any>>(url: string, body: T) => {
-  checkClient();
-  return await useFetch(`${baseUrl}${url}`, { method: 'PATCH', body });
+  return await useFetch(`${setBaseUrl()}${url}`, { method: 'PATCH', body });
 };
 
 export const del = async (url: string, params: IRequestParams = {}) => {
-  checkClient();
-  return await useFetch(`${baseUrl}${url}`, { method: 'DELETE', params });
+  return await useFetch(`${setBaseUrl()}${url}`, { method: 'DELETE', params });
 };

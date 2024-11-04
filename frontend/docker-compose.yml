@@ -5,11 +5,8 @@ services:
       target: prod
     container_name: wml_frontend
     environment:
-      # PORT: 3000
-      NUXT_PUBLIC_API_BASE: http://192.168.10.192:8484
-      NUXT_SERVER_BASE: http://172.24.0.3:8000
-    volumes:
-      - ./logs:/app/backend/logs
+      NUXT_PUBLIC_API_BASE: ${NUXT_CSR_API_BASE}
+      NUXT_SSR_API_BASE: ${NUXT_SSR_API_BASE}
     ports:
       - 3434:3000
     networks:
