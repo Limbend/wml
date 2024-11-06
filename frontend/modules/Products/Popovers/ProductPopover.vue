@@ -9,6 +9,7 @@ import { Form } from 'vee-validate';
 type Props = {
   loading?: TStatus;
   productToEdit?: IProduct;
+  visible: Boolean;
 };
 
 const props = defineProps<Props>();
@@ -52,7 +53,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
   preparedData.buy_date =
     preparedData.buy_date && new Date(preparedData.buy_date).toLocaleDateString('en-CA');
   emits('submit', preparedData);
-  resetForm();
+  !props.visible && resetForm();
 });
 </script>
 

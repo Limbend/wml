@@ -3,11 +3,6 @@ import { ariaLocaleRu, localeRu } from './assets/styles/primeVue/localization';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  runtimeConfig: {
-    public: {
-      apiBase: '',
-    },
-  },
   compatibilityDate: '2024-04-03',
   app: {
     head: {
@@ -51,9 +46,14 @@ export default defineNuxtConfig({
   },
   css: ['~/assets/styles/tailwind/base.css', '~/assets/styles/main.scss'],
   components: [{ path: '~/modules', pathPrefix: false }, '~/components'],
+  runtimeConfig: {
+    public: {
+      apiBase: '',
+    },
+  },
   vite: {
     define: {
-      'process.env.NUXT_SERVER_BASE': JSON.stringify(process.env.NUXT_SERVER_BASE),
+      'process.env.NUXT_SSR_API_BASE': JSON.stringify(process.env.NUXT_SSR_API_BASE),
     },
     css: {
       preprocessorOptions: {

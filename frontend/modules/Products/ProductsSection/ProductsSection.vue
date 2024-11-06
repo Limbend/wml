@@ -47,17 +47,17 @@ const deleteProductConfirm = (productId: number) => {
     rejectProps: {
       label: 'Отмена',
       severity: 'secondary',
-      outlined: true
+      outlined: true,
     },
     acceptProps: {
       label: 'Удалить',
       severity: 'danger',
-      loading: loadingDelete.value === 'loading'
+      loading: loadingDelete.value === 'loading',
     },
     accept: async () => {
       await deleteProductHandler(productId);
     },
-    reject: () => undefined
+    reject: () => undefined,
   });
 };
 
@@ -78,7 +78,7 @@ const changePurchasedStateHandler = async (product: IProduct) => {
   const newProduct = await ProductService.editProduct({
     id: product.id,
     is_purchased: !product.is_purchased,
-    name: product.name
+    name: product.name,
   });
 
   if ('id' in newProduct.data.value?.content) {
@@ -110,25 +110,30 @@ watchEffect(() => {
       :products="data?.content || []"
       :loadingCheckbox="purchasedCheckboxLoading"
       @edit="openEditPopover"
-      @change-purchased-state="changePurchasedStateHandler" />
+      @change-purchased-state="changePurchasedStateHandler"
+    />
 
     <Drawer
       v-model:visible="addPopover"
       header="Создать покупку"
       position="right"
-      class="!w-full md:!w-[70%] lg:!w-[40%]">
-      <ProductCreatePopover @on-create="createProductHandler" />
+      class="!w-full md:!w-[70%] lg:!w-[40%]"
+    >
+      <ProductCreatePopover :visible="addPopover" @on-create="createProductHandler" />
     </Drawer>
 
     <Drawer
       v-model:visible="editPopover"
       header="Редактировать покупку"
       position="right"
-      class="!w-full md:!w-[70%] lg:!w-[40%]">
+      class="!w-full md:!w-[70%] lg:!w-[40%]"
+    >
       <ProductEditPopover
+        :visible="editPopover"
         :productToEdit="productToEdit"
         @on-edit="editProductHandler"
-        @on-delete="deleteProductConfirm" />
+        @on-delete="deleteProductConfirm"
+      />
     </Drawer>
   </section>
 
