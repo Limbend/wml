@@ -1,0 +1,24 @@
+*.{py}
+.git
+
+# Python
+**/__pycache__/
+**/.pytest_cache/
+
+# Jupyter Notebook
+**/.ipynb_checkpoints/
+*checkpoint.ipynb
+
+# Log files
+**/logs
+***.log
+
+# Temp files
+temp/
+
+# Nuxt dev/build outputs
+frontend/.output
+frontend/.nuxt
+frontend/.nitro
+frontend/dist
+**/node_modules

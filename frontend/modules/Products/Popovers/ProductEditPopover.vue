@@ -36,6 +36,5 @@ const onSubmit = async (formData: IProduct) => {
     :productToEdit="productToEdit"
     :visible="visible"
     @submit="onSubmit"
-    @delete="(id: number) => $emit('onDelete', id)"
-  />
+    @delete="(id: number) => $emit('onDelete', id)" />
 </template>

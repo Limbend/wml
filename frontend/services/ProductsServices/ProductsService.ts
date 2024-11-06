@@ -25,7 +25,7 @@ const launchApi = {
 
   async delete(params: IProductApiParams) {
     return await del('/products', params);
-  }
+  },
 };
 
 export default class ProductService {

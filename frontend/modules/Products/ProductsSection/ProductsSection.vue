@@ -27,7 +27,7 @@ const createProductHandler = (newProduct: IProduct) => {
 };
 
 const editProductHandler = (editedProduct: IProduct) => {
-  const productToEdit = data.value.content?.findIndex((i) => i.id === editedProduct.id);
+  const productToEdit = data.value.content?.findIndex(i => i.id === editedProduct.id);
   data.value.content[productToEdit] = { ...editedProduct };
 
   editPopover.value = false;
@@ -67,7 +67,7 @@ const deleteProductHandler = async (productId: number) => {
   loadingDelete.value = 'success';
 
   if (result) {
-    data.value.content = data.value.content?.filter((i) => i.id !== productId);
+    data.value.content = data.value.content?.filter(i => i.id !== productId);
     editPopover.value = false;
   }
 };
@@ -82,7 +82,7 @@ const changePurchasedStateHandler = async (product: IProduct) => {
   });
 
   if ('id' in newProduct.data.value?.content) {
-    const productToEdit = data.value.content?.findIndex((i) => i.id === product.id);
+    const productToEdit = data.value.content?.findIndex(i => i.id === product.id);
     data.value.content[productToEdit].is_purchased = !product.is_purchased;
   }
   if (newProduct.status.value !== 'pending' && product.id)
@@ -110,15 +110,13 @@ watchEffect(() => {
       :products="data?.content || []"
       :loadingCheckbox="purchasedCheckboxLoading"
       @edit="openEditPopover"
-      @change-purchased-state="changePurchasedStateHandler"
-    />
+      @change-purchased-state="changePurchasedStateHandler" />
 
     <Drawer
       v-model:visible="addPopover"
       header="Создать покупку"
       position="right"
-      class="!w-full md:!w-[70%] lg:!w-[40%]"
-    >
+      class="!w-full md:!w-[70%] lg:!w-[40%]">
       <ProductCreatePopover :visible="addPopover" @on-create="createProductHandler" />
     </Drawer>
 
@@ -126,14 +124,12 @@ watchEffect(() => {
       v-model:visible="editPopover"
       header="Редактировать покупку"
       position="right"
-      class="!w-full md:!w-[70%] lg:!w-[40%]"
-    >
+      class="!w-full md:!w-[70%] lg:!w-[40%]">
       <ProductEditPopover
         :visible="editPopover"
         :productToEdit="productToEdit"
         @on-edit="editProductHandler"
-        @on-delete="deleteProductConfirm"
-      />
+        @on-delete="deleteProductConfirm" />
     </Drawer>
   </section>
 

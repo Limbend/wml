@@ -7,7 +7,15 @@ export const localeRu = {
   choose: 'Выбрать',
   upload: 'Загрузить',
   cancel: 'Отменить',
-  dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+  dayNames: [
+    'Воскресенье',
+    'Понедельник',
+    'Вторник',
+    'Среда',
+    'Четверг',
+    'Пятница',
+    'Суббота',
+  ],
   dayNamesShort: ['Вск', 'Пнд', 'Втр', 'Срд', 'Чтв', 'Птн', 'Сбт'],
   dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
   monthNames: [
@@ -22,7 +30,7 @@ export const localeRu = {
     'Сентябрь',
     'Октябрь',
     'Ноябрь',
-    'Декабрь'
+    'Декабрь',
   ],
   monthNamesShort: [
     'Янв',
@@ -36,17 +44,17 @@ export const localeRu = {
     'Сен',
     'Окт',
     'Ноя',
-    'Дек'
+    'Дек',
   ],
   dateFormat: 'dd.mm.yyyy',
   fileSizeTypes: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
   firstDayOfWeek: 1,
-  today: 'Сегодня'
+  today: 'Сегодня',
 };
 
 export const ariaLocaleRu = {
   trueLabel: 'Верно',
   falseLabel: 'Неверно',
   close: 'Отмена',
-  reject: 'Нет'
+  reject: 'Нет',
 };
