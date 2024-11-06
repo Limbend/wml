@@ -6,14 +6,14 @@ module.exports = {
     './pages/**/*.vue',
     './plugins/**/*.{js,ts}',
     './app.vue',
-    './error.vue'
+    './error.vue',
   ],
   theme: {
     extend: {
       colors: {
-        errorColor: '#ae2626'
-      }
-    }
+        errorColor: '#ae2626',
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 };

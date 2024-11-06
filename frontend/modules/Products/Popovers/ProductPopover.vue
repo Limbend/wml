@@ -73,8 +73,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
           severity="danger"
           size="small"
           text
-          @click="$emit('delete', productToEdit?.id)"
-        />
+          @click="$emit('delete', productToEdit?.id)" />
       </div>
       <div class="flex flex-col gap-y-1">
         <FloatLabel variant="on">
@@ -83,8 +82,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
             :class="submitCount && errors.name && 'p-invalid'"
             type="text"
             id="product-name"
-            v-model="name"
-          />
+            v-model="name" />
           <label
             for="product-name"
             :class="submitCount && errors.name && '!text-errorColor'"
@@ -101,8 +99,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
             type="text"
             id="product-model"
             :class="submitCount && errors.model && 'p-invalid'"
-            v-model="model"
-          />
+            v-model="model" />
           <label
             for="product-model"
             :class="submitCount && errors.model && '!text-errorColor'"
@@ -123,8 +120,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
             :max="99999999"
             currency="RUB"
             mode="currency"
-            v-model="price"
-          />
+            v-model="price" />
           <label
             for="product-price"
             :class="submitCount && errors.price && '!text-errorColor'"
@@ -143,8 +139,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
             id="product-buy-date"
             :invalid="Boolean(submitCount) && Boolean(errors.buy_date)"
             showIcon
-            iconDisplay="input"
-          />
+            iconDisplay="input" />
           <label
             for="product-buy-date"
             :class="submitCount && errors.buy_date && '!text-errorColor'"
@@ -164,8 +159,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
             type="text"
             id="product-guarantee"
             :max="99999999"
-            v-model="guarantee"
-          />
+            v-model="guarantee" />
           <label
             for="product-guarantee"
             :class="submitCount && errors.guarantee && '!text-errorColor'"
@@ -184,8 +178,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
             :class="submitCount && errors.shop && 'p-invalid'"
             type="text"
             id="product-shop"
-            v-model="shop"
-          />
+            v-model="shop" />
           <label
             for="product-shop"
             :class="submitCount && errors.shop && '!text-errorColor'"
@@ -205,8 +198,7 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
             :step="1"
             :min="1"
             :max="10"
-            fluid
-          >
+            fluid>
             <template #incrementicon>
               <span class="pi pi-plus" />
             </template>
@@ -225,7 +217,6 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
     <Button
       :label="productToEdit?.id ? 'Сохранить' : 'Создать'"
       type="submit"
-      :loading="loading === 'loading'"
-    />
+      :loading="loading === 'loading'" />
   </Form>
 </template>

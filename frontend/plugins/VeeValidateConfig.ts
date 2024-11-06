@@ -6,6 +6,6 @@ export default defineNuxtPlugin(() => {
     validateOnInput: false,
     validateOnBlur: false,
     validateOnChange: false,
-    validateOnModelUpdate: true
+    validateOnModelUpdate: true,
   });
 });
