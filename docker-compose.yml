@@ -1,4 +1,3 @@
-# Dev docker compose
 services:
   wml_db:
     image: postgres:17
@@ -28,20 +27,39 @@ services:
       BACKEND__DB__USER: ${BACKEND__DB__USER:-wml}
       BACKEND__DB__PASSWORD: ${BACKEND__DB__PASSWORD:?database password required}
       BACKEND__DB__NAME: ${BACKEND__DB__NAME:-wml}
-      BACKEND__ORIGINS: ${BACKEND__ORIGINS:-[]}
+      BACKEND__ORIGINS: ${BACKEND__ORIGINS:-["http://172.24.0.4:3000"]}
     volumes:
       - ./logs:/app/api/logs
     ports:
       - 8484:8000
-    depends_on:
-      - wml_db
     networks:
       wml-net:
+    depends_on:
+      - wml_db
+    restart: unless-stopped
+
+  wml_frontend:
+    build:
+      context: ./frontend
+      target: prod
+    container_name: wml_frontend
+    environment:
+      NUXT_PUBLIC_API_BASE: ${NUXT_CSR_API_BASE:?required an external address (CSR) for the frontend}
+      NUXT_SSR_API_BASE: wml_backend_api:8000
+    ports:
+      - 3434:3000
+    networks:
+      wml-net:
+    depends_on:
+      - wml_db
+      - wml_backend_api
     restart: unless-stopped
 
 networks:
   wml-net:
     name: wml-net
-    # driver: bridge
-    # driver_opts:
-    #   com.docker.network.bridge.name: wml-net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.24.0.0/16
+          gateway: 172.24.0.1
