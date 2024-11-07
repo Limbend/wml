@@ -1,5 +1,7 @@
 import logging
-from sqlalchemy import func, select, update
+from sqlalchemy import func, select, update, or_, String
+from sqlalchemy.sql.expression import cast
+
 
 from schemas import (
     SBaseResponse,
@@ -92,3 +94,54 @@ class ProductRepo:
             await session.commit()
 
         return SResponseUpdate(content=updated_product)
+
+    @classmethod
+    async def search(cls, search_str: str, padding: SPagination) -> SResponseGet:
+        search_str = f"%{search_str}%"
+
+        def f_search_query(s):
+            return (
+                select(s)
+                .filter(
+                    or_(
+                        ProductOrm.name.like(search_str),
+                        ProductOrm.model.like(search_str),
+                        ProductOrm.shop.like(search_str),
+                        cast(ProductOrm.price, String).like(search_str),
+                        cast(ProductOrm.buy_date, String).like(search_str),
+                        cast(ProductOrm.guarantee, String).like(search_str),
+                        cast(ProductOrm.guarantee_end_date, String).like(search_str),
+                    )
+                )
+                .filter_by(is_hidden=False)
+            )
+
+        async with new_session() as session:
+            query = f_search_query(func.count(ProductOrm.id))
+
+            result = await session.execute(query)
+            total_count = result.scalar()
+
+            query = (
+                f_search_query(ProductOrm)
+                .order_by(
+                    ProductOrm.name.like(search_str).desc(),
+                    ProductOrm.model.like(search_str).desc(),
+                    ProductOrm.shop.like(search_str).desc(),
+                    cast(ProductOrm.price, String).like(search_str).desc(),
+                    cast(ProductOrm.buy_date, String).like(search_str).desc(),
+                    cast(ProductOrm.guarantee, String).like(search_str).desc(),
+                    cast(ProductOrm.guarantee_end_date, String).like(search_str).desc(),
+                    ProductOrm.id.desc(),
+                )
+                .offset(padding.get_offset())
+                .limit(padding.by)
+            )
+
+            result = await session.execute(query)
+            product_shchemas = [
+                SProduct.model_validate(product_model)
+                for product_model in result.scalars().all()
+            ]
+
+        return SResponseGet(total_count=total_count, content=product_shchemas)

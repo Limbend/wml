@@ -79,3 +79,11 @@ async def edit_one(
 ) -> SResponseUpdate:
     resolve = await ProductRepo.edit_one(edit_product)
     return resolve
+
+
+@router.get("/search")
+async def search_products(
+    search_query: str, padding: Annotated[SPagination, Depends()]
+) -> SResponseGet:
+    products = await ProductRepo.search(search_query, padding)
+    return products
