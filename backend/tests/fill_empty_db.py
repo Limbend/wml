@@ -25,18 +25,18 @@ products = [
         buy_date=datetime.strptime("2022-03-15", "%Y-%m-%d").date(),
         guarantee=24,
         receipt="https://example.com/receipt1",
-        shop="Best Buy",
+        product_link="Best Buy",
         priority=1,
     ),
     SProductAdd(
         name="Laptop",
-        price=1299.99,
+        price=2499.00,
         model="MacBook Pro 16",
         is_purchased=True,
-        buy_date=datetime.strptime("2023-01-10", "%Y-%m-%d").date(),
+        buy_date=datetime.strptime("2024-11-10", "%Y-%m-%d").date(),
         guarantee=12,
         receipt="https://example.com/receipt2",
-        shop="Apple Store",
+        product_link="https://www.apple.com/shop/buy-mac/macbook-pro/16-inch-space-black-standard-display-apple-m4-pro-with-14-core-cpu-and-20-core-gpu-24gb-memory-512gb",
         priority=2,
     ),
     SProductAdd(
@@ -47,7 +47,7 @@ products = [
         buy_date=datetime.strptime("2021-08-05", "%Y-%m-%d").date(),
         guarantee=12,
         receipt="https://example.com/receipt3",
-        shop="Amazon",
+        product_link="https://jbl-russia.ru/product/jbl-charge-4",
         priority=3,
     ),
     SProductAdd(
@@ -64,7 +64,7 @@ products = [
         buy_date=datetime.strptime("2022-11-22", "%Y-%m-%d").date(),
         guarantee=24,
         receipt="https://example.com/receipt5",
-        shop="B&H",
+        product_link="https://www.amazon.com/Canon-Full-Frame-Mirrorless-Lightweight-Smartphone/dp/B0BTTTH5G6?crid=XB9UTR2B5ZA2&dib=eyJ2IjoiMSJ9.m_smke2encA--g4kjseOJbAcjrGpF3srTbwAn8zFSDEpMjcx5dv0osPTTEw4mAh1FI-kLJocIpmIi4irXjfP5pma-eSS9HuIiRKIfPv8Sr-sU0uguGr1mlyTD5haEmi9YbTB6gT92bhEV06L99MfS7I4g-gCqY1oZNBZ0BaVMhYtrcbbPAuCN2EqcP0tMQ6Lbd2oukZwP1vACaMqmtXH4AgcxZnVcC75GF0bHOAjwQg.J7BKhS6yTWWw3KQdwYPYDwibHBxAZJvTckvhZoPChUY&dib_tag=se&keywords=Canon+EOS+R&qid=1731939416&sprefix=macbook+pro+16%2Caps%2C443&sr=8-1",
         priority=2,
     ),
     SProductAdd(
@@ -82,7 +82,7 @@ products = [
         buy_date=datetime.strptime("2023-02-15", "%Y-%m-%d").date(),
         guarantee=12,
         receipt="https://example.com/receipt7",
-        shop="Apple Store",
+        product_link="Apple Store",
         priority=3,
     ),
     SProductAdd(
@@ -93,7 +93,7 @@ products = [
         buy_date=datetime.strptime("2023-06-12", "%Y-%m-%d").date(),
         guarantee=12,
         receipt="https://example.com/receipt8",
-        shop="Apple Store",
+        product_link="https://re-store.ru/catalog/MKN93/",
         priority=2,
     ),
     SProductAdd(
@@ -104,7 +104,7 @@ products = [
         buy_date=datetime.strptime("2022-09-30", "%Y-%m-%d").date(),
         guarantee=24,
         receipt="https://example.com/receipt9",
-        shop="Dell Store",
+        product_link="Dell Store",
         priority=3,
     ),
     SProductAdd(
@@ -115,7 +115,7 @@ products = [
         buy_date=datetime.strptime("2023-04-01", "%Y-%m-%d").date(),
         guarantee=12,
         receipt="https://example.com/receipt10",
-        shop="Amazon",
+        product_link="https://www.ozon.ru/product/logitech-klaviatura-besprovodnaya-mx-keys-s-russkaya-raskladka-chernyy-seryy-1343249019/?asb=7bT6GXwIKRKh0ZciV7Zrx42V3W6Ck0hrZqq44SON4GE%253D&asb2=tEbDas2UsUy-pVeFghggZcLCaxIJxCIDoBqaUCrwJWFkEFlji9DGueU69d2QZ_lzQJu5TfG8crCYFuN2GV-QaA&avtc=1&avte=4&avts=1731939500&keywords=%D0%9A%D0%BB%D0%B0%D0%B2%D0%B8%D0%B0%D1%82%D1%83%D1%80%D1%8B+Logitech+MX+KEYS",
         priority=4,
     ),
 ]

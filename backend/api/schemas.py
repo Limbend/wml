@@ -4,45 +4,83 @@ from pydantic.json_schema import SkipJsonSchema
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from enum import Enum
+import re
 
-from models import str_50, str_255, num_9_2
+from models import str_50, str_256, str_2048, num_9_2
+
+
+class SShop(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int = Field(gt=0)
+    name: str_256 = Field(max_length=256)
 
 
 class SProductAdd(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     name: str_50 = Field(min_length=1, max_length=50)
-    model: Optional[str_255] = Field(None, max_length=255)
+    model: Optional[str_256] = Field(None, max_length=256)
     price: Optional[num_9_2] = Field(None, max_digits=9, decimal_places=2, gt=0)
     is_purchased: bool = False
     buy_date: Optional[date] = None
     guarantee: int = Field(None, ge=0)
     guarantee_end_date: SkipJsonSchema[date] = None
     receipt: Optional[str] = None
-    shop: Optional[str_255] = Field(None, max_length=255)
+    product_link: Optional[str_2048] = Field(None, max_length=2048)
     priority: int = Field(None, ge=1, le=10)
     is_hidden: SkipJsonSchema[bool] = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self._generated_fields_ = {}
         self.auto_generate_fields()
 
+    @staticmethod
+    def get_url_in_str(source_str: str):
+        pattern = "(https:\/\/|http:\/\/|www.)[a-z0-9/\.,\-+=_?&~!*'();:@&$]+"
+        url = re.search(pattern, source_str.lower())
+        if url is not None:
+            return url.group()
+        return False
+
+    @staticmethod
+    def get_domain_in_url(url: str):
+        pattern = "\/\/[a-z0-9\.\-+=_]+\/"
+        domain = re.search(pattern, url.lower())
+        if domain is not None:
+            domain = domain.group()[2:-1]
+            if "www." == domain[:4]:
+                domain = domain[4:]
+            return domain
+        return False
+
     def auto_generate_fields(self) -> dict:
-        fields = {}
         if self.guarantee is None:
             self.guarantee = 0
-            fields.update({"guarantee": self.guarantee})
+            self._generated_fields_.update({"guarantee": self.guarantee})
         if self.priority is None:
             self.priority = 5
-            fields.update({"priority": self.priority})
+            self._generated_fields_.update({"priority": self.priority})
 
         if self.buy_date is not None:
             self.guarantee_end_date = self.buy_date + relativedelta(
                 months=+self.guarantee
             )
-            fields.update({"guarantee_end_date": self.guarantee_end_date})
+            self._generated_fields_.update(
+                {"guarantee_end_date": self.guarantee_end_date}
+            )
 
-        self._generated_fields_ = fields
+        if self.product_link is not None:
+            new_product_link = self.get_url_in_str(self.product_link)
+            if new_product_link:
+                if new_product_link != self.product_link:
+                    self.product_link = new_product_link
+                    self._generated_fields_.update({"product_link": self.product_link})
+
+                shop_name = self.get_domain_in_url(self.product_link)
+                if shop_name:
+                    self._generated_fields_.update({"__shop_name__": shop_name})
 
         return self._generated_fields_
 
@@ -54,6 +92,7 @@ class SProductAdd(BaseModel):
 class SProduct(SProductAdd):
     id: int = Field(gt=0)
     guarantee_end_date: Optional[date] = None
+    shop: Optional[SShop] = None
     is_hidden: bool = False
 
 
@@ -133,7 +172,7 @@ class ProductSortingField(Enum):
     buy_date = "buy_date"
     guarantee = "guarantee"
     guarantee_end_date = "guarantee_end_date"
-    shop = "shop"
+    product_link = "product_link"
     priority = "priority"
 
 

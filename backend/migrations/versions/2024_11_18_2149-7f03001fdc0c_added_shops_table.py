@@ -1,8 +1,8 @@
-"""create products table
+"""added: shops table
 
-Revision ID: 6aa1a4102f5b
+Revision ID: 7f03001fdc0c
 Revises: 
-Create Date: 2024-09-30 13:41:28.392453
+Create Date: 2024-11-18 21:49:55.233116
 
 """
 
@@ -12,29 +12,41 @@ from alembic import op
 import sqlalchemy as sa
 
 
-# revision identifiers, used by Alembic.
-revision: str = "6aa1a4102f5b"
+revision: str = "7f03001fdc0c"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.execute(f"create schema backend")
+    op.execute("create schema backend")
+    op.create_table(
+        "shops",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("name", sa.String(length=256), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("name"),
+        schema="backend",
+    )
     op.create_table(
         "products",
         sa.Column("id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(length=50), nullable=False),
-        sa.Column("model", sa.String(length=255), nullable=True),
+        sa.Column("model", sa.String(length=256), nullable=True),
         sa.Column("price", sa.Numeric(precision=9, scale=2), nullable=True),
         sa.Column("is_purchased", sa.Boolean(), nullable=False),
         sa.Column("buy_date", sa.Date(), nullable=True),
         sa.Column("guarantee", sa.Integer(), nullable=False),
         sa.Column("guarantee_end_date", sa.Date(), nullable=True),
         sa.Column("receipt", sa.String(), nullable=True),
-        sa.Column("shop", sa.String(length=255), nullable=True),
+        sa.Column("product_link", sa.String(length=2048), nullable=True),
+        sa.Column("shop_id", sa.Integer(), nullable=True),
         sa.Column("priority", sa.Integer(), nullable=False),
-        sa.Column("is_hidden", sa.Boolean(), nullable=True),
+        sa.Column("is_hidden", sa.Boolean(), nullable=False),
+        sa.ForeignKeyConstraint(
+            ["shop_id"],
+            ["backend.shops.id"],
+        ),
         sa.PrimaryKeyConstraint("id"),
         schema="backend",
     )
@@ -42,4 +54,5 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_table("products", schema="backend")
+    op.drop_table("shops", schema="backend")
     op.execute("drop schema backend")

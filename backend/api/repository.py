@@ -1,5 +1,6 @@
 import logging
 from sqlalchemy import func, select, update, or_, String
+from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.expression import cast
 
 
@@ -12,9 +13,10 @@ from schemas import (
     SResponseAdd,
     SResponseGet,
     SResponseUpdate,
+    SShop,
     SSort,
 )
-from models import ProductOrm
+from models import ProductOrm, ShopOrm
 
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 
@@ -34,9 +36,30 @@ class ProductRepo:
     async def add_one(cls, data: SProductAdd) -> SResponseAdd:
         async with new_session() as session:
             product = ProductOrm(**data.model_dump())
+            if "__shop_name__" in data.generated_fields.keys():
+                query = select(ShopOrm).filter_by(
+                    name=data.generated_fields["__shop_name__"]
+                )
+                result = await session.execute(query)
+                result = result.scalar()
+
+                if result is not None:
+                    product.shop_id = result.id
+                else:
+                    shop = ShopOrm(name=data.generated_fields["__shop_name__"])
+                    product.shop = shop
+                    session.add(shop)
+
             session.add(product)
             await session.flush()
             await session.commit()
+
+            if "__shop_name__" in data.generated_fields.keys():
+                data.generated_fields["shop"] = SShop.model_validate(
+                    product.shop
+                ).model_dump()
+                del data.generated_fields["__shop_name__"]
+
             return SResponseAdd(
                 content=SResponseAdd.ContentAdd(
                     product_id=product.id,
@@ -59,7 +82,11 @@ class ProductRepo:
             result = await session.execute(query)
             total_count = result.scalar()
 
-            query = select(ProductOrm).filter_by(is_hidden=False)
+            query = (
+                select(ProductOrm)
+                .options(joinedload(ProductOrm.shop))
+                .filter_by(is_hidden=False)
+            )
             if sorting.desc:
                 query = query.order_by(getattr(ProductOrm, sorting.field.value).desc())
             else:
