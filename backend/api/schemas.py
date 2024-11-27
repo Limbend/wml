@@ -33,7 +33,6 @@ class SProductAdd(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._generated_fields_ = {}
         self.auto_generate_fields()
 
     @staticmethod
@@ -56,6 +55,7 @@ class SProductAdd(BaseModel):
         return False
 
     def auto_generate_fields(self) -> dict:
+        self._generated_fields_ = {}
         if self.guarantee is None:
             self.guarantee = 0
             self._generated_fields_.update({"guarantee": self.guarantee})
@@ -107,7 +107,7 @@ class SProductEdit(SProductAdd):
         BaseModel.__init__(self, **kwargs)
 
     def auto_generate_fields(self, product_in_db: SProduct):
-        fields = {}
+        self._generated_fields_ = {}
         buy_date = (
             self.buy_date if self.buy_date is not None else product_in_db.buy_date
         )
@@ -119,19 +119,41 @@ class SProductEdit(SProductAdd):
             guarantee_end_date = buy_date + relativedelta(months=+guarantee)
             if guarantee_end_date != product_in_db.guarantee_end_date:
                 self.guarantee_end_date = guarantee_end_date
-                fields.update({"guarantee_end_date": self.guarantee_end_date})
+                self._generated_fields_.update(
+                    {"guarantee_end_date": self.guarantee_end_date}
+                )
 
-        self._generated_fields_ = fields
+        if (
+            self.product_link is not None
+            and self.product_link != product_in_db.product_link
+        ):
+            new_product_link = self.get_url_in_str(self.product_link)
+            if new_product_link:
+                if new_product_link != self.product_link:
+                    self.product_link = new_product_link
+                    self._generated_fields_.update({"product_link": self.product_link})
+
+                shop_name = self.get_domain_in_url(self.product_link)
+                if shop_name:
+                    self._generated_fields_.update({"__shop_name__": shop_name})
+
         return self._generated_fields_
 
-    def get_edit_fields(self):
+    def get_edit_fields(self, product_in_db: SProduct):
         edit_fields = self.model_dump()
+        old_fields = product_in_db.model_dump()
 
         edit_fields = {
             key: edit_fields[key]
             for key in edit_fields.keys()
-            if key != "id" and not edit_fields[key] is None
+            if key != "id"
+            and not edit_fields[key] is None
+            and edit_fields[key] != old_fields[key]
         }
+
+        if "__shop_name__" in self._generated_fields_:
+            edit_fields.update({"shop_id": product_in_db.shop.id})
+            del self.generated_fields["__shop_name__"]
 
         return edit_fields
 

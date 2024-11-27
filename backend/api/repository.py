@@ -37,18 +37,9 @@ class ProductRepo:
         async with new_session() as session:
             product = ProductOrm(**data.model_dump())
             if "__shop_name__" in data.generated_fields.keys():
-                query = select(ShopOrm).filter_by(
-                    name=data.generated_fields["__shop_name__"]
+                await cls._create_and_set_shop_(
+                    session, data.generated_fields["__shop_name__"], product
                 )
-                result = await session.execute(query)
-                result = result.scalar()
-
-                if result is not None:
-                    product.shop_id = result.id
-                else:
-                    shop = ShopOrm(name=data.generated_fields["__shop_name__"])
-                    product.shop = shop
-                    session.add(shop)
 
             session.add(product)
             await session.flush()
@@ -103,23 +94,31 @@ class ProductRepo:
             return SResponseGet(total_count=total_count, content=product_shchemas)
 
     @classmethod
-    async def edit_one(cls, product: SProductEdit) -> SResponseUpdate:
+    async def edit_one(cls, data: SProductEdit) -> SResponseUpdate:
         async with new_session() as session:
-            query = select(ProductOrm).filter_by(id=product.id)
+            query = (
+                select(ProductOrm)
+                .options(joinedload(ProductOrm.shop))
+                .filter_by(id=data.id)
+            )
             # logger.info(query.compile(compile_kwargs={'literal_binds': True}))
             result = await session.execute(query)
             product_in_db = SProduct.model_validate(result.scalar())
 
-            product.auto_generate_fields(product_in_db)
-            edit_fields = product.get_edit_fields()
-            updated_product = product_in_db.model_copy(update=edit_fields)
+            data.auto_generate_fields(product_in_db)
+            if "__shop_name__" in data.generated_fields.keys():
+                await cls._create_and_set_shop_(
+                    session, data.generated_fields["__shop_name__"], product_in_db
+                )
+                await session.flush()
 
-            query = update(ProductOrm).values(**edit_fields).filter_by(id=product.id)
+            edit_fields = data.get_edit_fields(product_in_db)
+            query = update(ProductOrm).values(**edit_fields).filter_by(id=data.id)
             # logger.info(query.compile(compile_kwargs={'literal_binds': True}))
             await session.execute(query)
-
             await session.commit()
 
+        updated_product = product_in_db.model_copy(update=edit_fields)
         return SResponseUpdate(content=updated_product)
 
     @classmethod
@@ -133,7 +132,7 @@ class ProductRepo:
                     or_(
                         ProductOrm.name.like(search_str),
                         ProductOrm.model.like(search_str),
-                        ProductOrm.shop.like(search_str),
+                        ProductOrm.product_link.like(search_str),
                         cast(ProductOrm.price, String).like(search_str),
                         cast(ProductOrm.buy_date, String).like(search_str),
                         cast(ProductOrm.guarantee, String).like(search_str),
@@ -151,10 +150,11 @@ class ProductRepo:
 
             query = (
                 f_search_query(ProductOrm)
+                .options(joinedload(ProductOrm.shop))
                 .order_by(
                     ProductOrm.name.like(search_str).desc(),
                     ProductOrm.model.like(search_str).desc(),
-                    ProductOrm.shop.like(search_str).desc(),
+                    ProductOrm.product_link.like(search_str).desc(),
                     cast(ProductOrm.price, String).like(search_str).desc(),
                     cast(ProductOrm.buy_date, String).like(search_str).desc(),
                     cast(ProductOrm.guarantee, String).like(search_str).desc(),
@@ -172,3 +172,19 @@ class ProductRepo:
             ]
 
         return SResponseGet(total_count=total_count, content=product_shchemas)
+
+    @classmethod
+    async def _create_and_set_shop_(
+        cls, session, shop_name: str, target_product: ProductOrm
+    ):
+        query = select(ShopOrm).filter_by(name=shop_name)
+        result = await session.execute(query)
+        result = result.scalar()
+
+        if result is not None:
+            target_product.shop_id = result.id
+            target_product.shop = result
+        else:
+            shop = ShopOrm(name=shop_name)
+            target_product.shop = shop
+            session.add(shop)
