@@ -5,37 +5,59 @@ services:
     command: ["-p ${BACKEND__DB__PORT:-1212}"]
     environment:
       POSTGRES_DB: ${BACKEND__DB__NAME:-wml}
-      POSTGRES_USER: ${BACKEND__DB__USER:-wml}
-      POSTGRES_PASSWORD: ${BACKEND__DB__PASSWORD:?database password required}
+      POSTGRES_USER: ${BACKEND__DB__USER:-wml_app}
+      POSTGRES_PASSWORD: ${BACKEND__DB__PASSWORD}
     #   PGDATA: /var/lib/postgresql/data/pgdata
     # volumes:
     #   - ./temp/postgres:/var/lib/postgresql/data
-    # ports:
-    #   - 8485:${BACKEND__DB__PORT:-1212}
+    ports:
+      - 8485:${BACKEND__DB__PORT:-1212}
+    networks:
+      wml-net:
+    restart: unless-stopped
+
+  wml_s3:
+    image: minio/minio
+    container_name: wml_s3
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO__USER:-wml}
+      MINIO_ROOT_PASSWORD: ${MINIO__PASSWOR}
+    user: ${MINIO__LOCAL__UIDGID}
+    volumes:
+      - ${MINIO__LOCAL__PATH}:/data
+    ports:
+      - 9400:9000
+      - 9401:9001
     networks:
       wml-net:
     restart: unless-stopped
 
   wml_backend_api:
     build:
-      context: ./backend
+      context: .
     container_name: wml_backend_api
-    command: ["/app/api/docker/dev.app.sh"]
+    command: ["/app/docker/dev.app.sh"]
     environment:
       BACKEND__DB__HOST: wml_db
       BACKEND__DB__PORT: ${BACKEND__DB__PORT:-1212}
-      BACKEND__DB__USER: ${BACKEND__DB__USER:-wml}
-      BACKEND__DB__PASSWORD: ${BACKEND__DB__PASSWORD:?database password required}
+      BACKEND__DB__USER: ${BACKEND__DB__USER:-wml_app}
+      BACKEND__DB__PASSWORD: ${BACKEND__DB__PASSWORD}
       BACKEND__DB__NAME: ${BACKEND__DB__NAME:-wml}
       BACKEND__ORIGINS: ${BACKEND__ORIGINS:-["http://172.24.0.4:3000"]}
+
+      BACKEND__S3__ACCESS_KEY: ${BACKEND__S3__ACCESS_KEY}
+      BACKEND__S3__SECRET_KEY: ${BACKEND__S3__SECRET_KEY}
+      BACKEND__S3__ENDPOINT_URL: ${BACKEND__S3__ENDPOINT_URL}
+      BACKEND__S3__BUCKET_NAME: ${BACKEND__S3__BUCKET_NAME:-wml}
     volumes:
       - ./logs:/app/api/logs
     ports:
       - 8484:8000
-    networks:
-      wml-net:
     depends_on:
       - wml_db
+    networks:
+      wml-net:
     restart: unless-stopped
 
   wml_frontend:
