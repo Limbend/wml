@@ -38,7 +38,7 @@ def upgrade() -> None:
         sa.Column("buy_date", sa.Date(), nullable=True),
         sa.Column("guarantee", sa.Integer(), nullable=False),
         sa.Column("guarantee_end_date", sa.Date(), nullable=True),
-        sa.Column("receipt", sa.String(), nullable=True),
+        sa.Column("receipt", sa.String(length=1024), nullable=True),
         sa.Column("product_link", sa.String(length=2048), nullable=True),
         sa.Column("shop_id", sa.Integer(), nullable=True),
         sa.Column("priority", sa.Integer(), nullable=False),

@@ -1,13 +1,14 @@
 from decimal import Decimal
 from typing import Annotated, Optional
 from pydantic import PlainSerializer
-from sqlalchemy import CheckConstraint, Numeric, String, ForeignKey, UniqueConstraint
+from sqlalchemy import Numeric, String, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import date
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
 str_50 = Annotated[str, 50]
 str_256 = Annotated[str, 256]
+str_1024 = Annotated[str, 1024]
 str_2048 = Annotated[str, 2048]
 num_9_2 = Annotated[
     Decimal, PlainSerializer(lambda x: float(x), return_type=float, when_used="json")
@@ -58,7 +59,7 @@ class ProductOrm(Base):
     buy_date: Mapped[Optional[date]]
     guarantee: Mapped[int]
     guarantee_end_date: Mapped[Optional[date]]
-    receipt: Mapped[Optional[str]]
+    receipt: Mapped[Optional[str_1024]]
     product_link: Mapped[Optional[str_2048]]
     shop_id: Mapped[Optional[int]] = mapped_column(ForeignKey(ShopOrm.id))
     priority: Mapped[int]

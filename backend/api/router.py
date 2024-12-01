@@ -1,13 +1,15 @@
 from typing import Annotated
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, File, UploadFile
 
 from repository import ProductRepo
 from schemas import (
+    ReceiptValidator,
     SBaseResponse,
     SProductEdit,
     SPagination,
     SProductAdd,
     SResponseAdd,
+    SResponseAddReceipt,
     SResponseGet,
     SResponseUpdate,
     SSort,
@@ -87,3 +89,13 @@ async def search_products(
 ) -> SResponseGet:
     products = await ProductRepo.search(search_query, padding)
     return products
+
+
+@router.post("/receipts")
+async def upload_receipt(
+    product_id: int,
+    file: UploadFile = File(...),
+) -> SResponseAddReceipt:
+    ReceiptValidator().validate(file)
+    resolve = await ProductRepo.upload_receipt(product_id, file)
+    return resolve

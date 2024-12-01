@@ -1,4 +1,7 @@
-from typing import Optional
+import logging
+from typing import Optional, List, Union
+from fastapi import HTTPException
+from starlette import status
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.json_schema import SkipJsonSchema
 from datetime import date
@@ -6,7 +9,9 @@ from dateutil.relativedelta import relativedelta
 from enum import Enum
 import re
 
-from models import str_50, str_256, str_2048, num_9_2
+from models import str_50, str_256, str_1024, str_2048, num_9_2
+
+logger = logging.getLogger(__name__)
 
 
 class SShop(BaseModel):
@@ -26,7 +31,7 @@ class SProductAdd(BaseModel):
     buy_date: Optional[date] = None
     guarantee: int = Field(None, ge=0)
     guarantee_end_date: SkipJsonSchema[date] = None
-    receipt: Optional[str] = None
+    receipt: Optional[str_1024] = Field(None, max_length=1024)
     product_link: Optional[str_2048] = Field(None, max_length=2048)
     priority: int = Field(None, ge=1, le=10)
     is_hidden: SkipJsonSchema[bool] = False
@@ -89,11 +94,14 @@ class SProductAdd(BaseModel):
         return self._generated_fields_
 
 
-class SProduct(SProductAdd):
+class SProductWithoutShop(SProductAdd):
     id: int = Field(gt=0)
     guarantee_end_date: Optional[date] = None
-    shop: Optional[SShop] = None
     is_hidden: bool = False
+
+
+class SProduct(SProductWithoutShop):
+    shop: Optional[SShop] = None
 
 
 class SProductEdit(SProductAdd):
@@ -180,6 +188,10 @@ class SResponseGet(SBaseResponse):
     content: Optional[list[SProduct]] = None
 
 
+class SResponseAddReceipt(SBaseResponse):
+    content: Optional[str] = None
+
+
 class SPagination(BaseModel):
     by: int = Field(25, ge=1, le=100)
     chunk: int = Field(0, ge=0)
@@ -201,3 +213,63 @@ class ProductSortingField(Enum):
 class SSort(BaseModel):
     field: Optional[ProductSortingField] = ProductSortingField.id
     desc: Optional[bool] = False
+
+
+class BaseFileValidator:
+    def __init__(
+        self,
+        size_limit: int = None,
+        content_type: Union[List[str], str] = None,
+    ):
+        self.size_limit = size_limit
+        if type(content_type) == list:
+            self.content_type = content_type
+        else:
+            self.content_type = [content_type]
+
+    def validate(self, file):
+        if self.size_limit is not None and file.size > self.size_limit:
+            message = f"File size is too large. The maximum size is {self.size_limit}."
+            logger.error(message)
+            raise HTTPException(
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                detail=message,
+            )
+
+        if file.content_type is not None:
+            if (
+                self.content_type is not None
+                and file.content_type not in self.content_type
+            ):
+                message = f"File type ({file.content_type}) is not supported. Valid file types: {self.content_type}."
+                logger.error(message)
+                raise HTTPException(
+                    status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                    detail=message,
+                )
+        else:
+            # Check the file by ext if there are no headers.
+            file_ext = file.filename.split(".")[-1]
+            valid_ext = [c_type.split("/")[-1] for c_type in self.content_type]
+            if file_ext not in valid_ext:
+                message = f"File type ({file_ext}) is not supported. Valid file types: {valid_ext}."
+                logger.error(message)
+                raise HTTPException(
+                    status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                    detail=message,
+                )
+
+        return True
+
+
+class ReceiptValidator(BaseFileValidator):
+    size_limit = 15_728_640
+    content_type = [
+        "application/pdf",
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+    ]
+
+    def __init__(self):
+        super().__init__(self.size_limit, self.content_type)

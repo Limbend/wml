@@ -1,26 +1,27 @@
 import logging
+from fastapi import UploadFile
 from sqlalchemy import func, select, update, or_, String
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.expression import cast
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from datetime import datetime
 
-
+from s3 import S3Client
 from schemas import (
     SBaseResponse,
     SProductAdd,
     SProductEdit,
     SProduct,
     SPagination,
+    SProductWithoutShop,
     SResponseAdd,
+    SResponseAddReceipt,
     SResponseGet,
     SResponseUpdate,
     SShop,
     SSort,
 )
 from models import ProductOrm, ShopOrm
-
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-
-
 from config import settings
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,13 @@ engine = create_async_engine(
     echo=settings.db.echo,
 )
 new_session = async_sessionmaker(engine, expire_on_commit=False)
+logger.info(
+    f"Created DB engine. URL: {settings.db.host}:{settings.db.port}\t\tDB_Name: {settings.db.name}"
+)
+s3_client = S3Client(**settings.s3.model_dump())
+logger.info(
+    f"Created S3 Client. URL: {settings.s3.endpoint_url}\t\tBucket: {settings.s3.bucket_name}"
+)
 
 
 class ProductRepo:
@@ -72,7 +80,6 @@ class ProductRepo:
             query = select(func.count(ProductOrm.id)).filter_by(is_hidden=False)
             result = await session.execute(query)
             total_count = result.scalar()
-
             query = (
                 select(ProductOrm)
                 .options(joinedload(ProductOrm.shop))
@@ -84,6 +91,7 @@ class ProductRepo:
                 query = query.order_by(getattr(ProductOrm, sorting.field.value).asc())
 
             query = query.offset(padding.get_offset()).limit(padding.by)
+            logger.info(query.compile(compile_kwargs={"literal_binds": True}))
 
             result = await session.execute(query)
             product_shchemas = [
@@ -172,6 +180,29 @@ class ProductRepo:
             ]
 
         return SResponseGet(total_count=total_count, content=product_shchemas)
+
+    @classmethod
+    async def upload_receipt(
+        cls, product_id: int, file: UploadFile
+    ) -> SResponseAddReceipt:
+        async with new_session() as session:
+            query = select(ProductOrm).filter_by(id=product_id)
+            result = await session.execute(query)
+            product_in_db = SProductWithoutShop.model_validate(result.scalar())
+
+            if product_in_db.buy_date is not None:
+                year = product_in_db.buy_date.year
+            else:
+                year = datetime.now().year
+
+            path = f"{year}/{product_in_db.id:03.0f}.{file.filename.split('.')[-1]}"
+
+            await s3_client.upload_data(data=file.file.read(), path=path)
+            path = f"{settings.s3.bucket_name}/{path}"
+            query = update(ProductOrm).values(receipt=path).filter_by(id=product_id)
+            await session.execute(query)
+            await session.commit()
+        return SResponseAddReceipt(content=path)
 
     @classmethod
     async def _create_and_set_shop_(

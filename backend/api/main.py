@@ -4,11 +4,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from router import router as product_router
 from config import settings
 
 logging.config.dictConfig(settings.logging_config)
 logger = logging.getLogger(__name__)
+
+from schemas import ReceiptValidator
+from middlewares import LimitUploadSize
+from router import router as product_router
 
 
 @asynccontextmanager
@@ -35,3 +38,4 @@ app.add_middleware(
         "Authorization",
     ],
 )
+app.add_middleware(LimitUploadSize, max_upload_size=ReceiptValidator.size_limit)
