@@ -17,6 +17,13 @@ class DatabaseConfig(BaseModel):
         return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
 
 
+class S3Config(BaseModel):
+    access_key: str
+    secret_key: str
+    endpoint_url: str
+    bucket_name: str
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         case_sensitive=False,
@@ -25,6 +32,7 @@ class Settings(BaseSettings):
     )
 
     db: DatabaseConfig
+    s3: S3Config
     origins: list[str]
 
     @property
@@ -64,6 +72,16 @@ class Settings(BaseSettings):
                     "propagate": False,
                 },
                 "repository": {
+                    "level": "INFO",
+                    "handlers": ["default", "info_rotating_file_handler"],
+                    "propagate": False,
+                },
+                "schemas": {
+                    "level": "INFO",
+                    "handlers": ["default", "info_rotating_file_handler"],
+                    "propagate": False,
+                },
+                "s3": {
                     "level": "INFO",
                     "handlers": ["default", "info_rotating_file_handler"],
                     "propagate": False,
