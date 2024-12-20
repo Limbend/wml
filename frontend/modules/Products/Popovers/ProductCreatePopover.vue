@@ -12,12 +12,11 @@ defineProps<Props>();
 
 const emit = defineEmits(['onCreate']);
 
-const loading = ref<TStatus | undefined>(undefined);
+const loading = ref<TStatus>('success');
 
 const onSubmit = async (formData: IProduct) => {
   loading.value = 'loading';
-  const { data, status } = await ProductService.createProduct(formData);
-  loading.value = status.value;
+  const { data, status } = await ProductService.createProduct(formData, loading);
   if ('product_id' in data.value.content) {
     const newProduct = {
       ...formData,

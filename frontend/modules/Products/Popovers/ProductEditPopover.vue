@@ -13,12 +13,10 @@ defineProps<Props>();
 
 const emits = defineEmits(['onEdit', 'onDelete']);
 
-const loading = ref<TStatus | undefined>(undefined);
+const loading = ref<TStatus>('success');
 
 const onSubmit = async (formData: IProduct) => {
-  loading.value = 'loading';
-  const { data, status } = await ProductService.editProduct(formData);
-  loading.value = status.value;
+  const { data } = await ProductService.editProduct(formData, loading);
   if ('id' in data.value?.content) {
     const newProduct = {
       ...formData,

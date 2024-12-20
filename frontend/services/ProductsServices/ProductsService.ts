@@ -3,10 +3,11 @@ import type { AsyncData } from 'nuxt/app';
 import type { FetchError } from 'ofetch';
 
 import type { IProduct, IProductResponse } from '~/types/Products/Products.types.ts';
+import type { TEmptyObject, TStatus } from '~/types/index.types';
 
 export interface IProductApiParams {
-  limit?: string;
-  offset?: string;
+  by?: number;
+  chunk?: number;
   product_id?: number;
 }
 
@@ -29,7 +30,11 @@ const launchApi = {
 };
 
 export default class ProductService {
-  static async getAll(params: IProductApiParams) {
+  static async getAll(
+    params: IProductApiParams,
+    loading: Ref<TStatus> | TEmptyObject = {},
+  ) {
+    loading.value = 'loading';
     try {
       const products = await launchApi.get(params);
 
@@ -37,14 +42,23 @@ export default class ProductService {
         throw products;
       }
 
-      return products as AsyncData<{ content: IProduct[] }, FetchError | null>;
+      return products as AsyncData<
+        { content: IProduct[]; total_count: number },
+        FetchError | null
+      >;
     } catch (products) {
       console.log('products getAll error', products);
-      return products as AsyncData<{ content: IProduct[] }, FetchError | null>;
+      return products as AsyncData<
+        { content: IProduct[]; total_count: number },
+        FetchError | null
+      >;
+    } finally {
+      loading.value = 'success';
     }
   }
 
-  static async createProduct(body: IProduct) {
+  static async createProduct(body: IProduct, loading: Ref<TStatus> | TEmptyObject = {}) {
+    loading.value = 'loading';
     try {
       const product = await launchApi.post(body);
 
@@ -56,10 +70,13 @@ export default class ProductService {
     } catch (product) {
       console.log('products createProduct error', product);
       return product as AsyncData<IProductResponse, FetchError | null>;
+    } finally {
+      loading.value = 'success';
     }
   }
 
-  static async editProduct(body: IProduct) {
+  static async editProduct(body: IProduct, loading: Ref<TStatus> | TEmptyObject = {}) {
+    loading.value = 'loading';
     try {
       const product = await launchApi.patch(body);
 
@@ -71,6 +88,8 @@ export default class ProductService {
     } catch (product) {
       console.log('products editProduct error', product);
       return product as AsyncData<IProductResponse, FetchError | null>;
+    } finally {
+      loading.value = 'success';
     }
   }
 
