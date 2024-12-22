@@ -61,10 +61,18 @@ class ProductRepo:
     @classmethod
     async def hide_one(cls, product_id: int) -> SBaseResponse:
         async with new_session() as session:
-            query = update(ProductOrm).values(is_hidden=True).filter_by(id=product_id)
-            await session.execute(query)
+            query = (
+                update(ProductOrm)
+                .values(is_hidden=True)
+                .filter_by(id=product_id)
+                .filter_by(is_hidden=False)
+                .returning(ProductOrm.id)
+            )
+            response = await session.execute(query)
             await session.commit()
-        return SBaseResponse()
+
+        result = response.scalar() == product_id
+        return SBaseResponse(ok=result)
 
     @classmethod
     async def get_list(cls, padding: SPagination, sorting: SSort) -> SResponseGet:

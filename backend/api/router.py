@@ -1,9 +1,9 @@
 from typing import Annotated
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, HTTPException, Body, Depends
+from starlette import status
 
 from repository import ProductRepo
 from schemas import (
-    SBaseResponse,
     SProductEdit,
     SPagination,
     SProductAdd,
@@ -26,14 +26,30 @@ async def get_products(
 
 @router.post("")
 async def add_products(product: Annotated[SProductAdd, Body()]) -> SResponseAdd:
-    resolve = await ProductRepo.add_one(product)
-    return resolve
+    response = await ProductRepo.add_one(product)
+    return response
 
 
 @router.delete("")
-async def del_products(product_id: int) -> SBaseResponse:
-    resolve = await ProductRepo.hide_one(product_id=product_id)
-    return resolve
+async def del_products(
+    product_id: int,
+    padding: Annotated[SPagination, Depends()],
+    sorting: Annotated[SSort, Depends()],
+) -> SResponseGet:
+    hide_response = await ProductRepo.hide_one(product_id=product_id)
+
+    if not hide_response.ok:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"The product has not been updated! This id ({product_id}) does not exist or it was deleted earlier.",
+        )
+
+    # Returns the product, to replace the deleted.
+    padding.chunk = padding.chunk + 1
+    selector = SPagination(by=1, chunk=padding.get_offset() - 1)
+    replacement_product = await ProductRepo.get_list(selector, sorting)
+
+    return replacement_product
 
 
 @router.patch("")
@@ -77,8 +93,8 @@ async def edit_one(
         ),
     ]
 ) -> SResponseUpdate:
-    resolve = await ProductRepo.edit_one(edit_product)
-    return resolve
+    response = await ProductRepo.edit_one(edit_product)
+    return response
 
 
 @router.get("/search")
