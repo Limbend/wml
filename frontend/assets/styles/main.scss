@@ -1,4 +1,6 @@
 @use '~/assets/styles/variables' as *;
+@use '~/assets/styles/media';
+@use 'primeicons/primeicons.css';
 
 * {
   box-sizing: border-box;
@@ -47,7 +49,3 @@ a {
     background-color: $dark-bg-color;
   }
 }
-
-@import 'primeicons/primeicons.css';
-// Импорт медиа запросов
-@import '~/assets/styles/media';
