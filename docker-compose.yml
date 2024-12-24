@@ -22,7 +22,7 @@ services:
     command: ["server", "/data", "--console-address", ":9001"]
     environment:
       MINIO_ROOT_USER: ${MINIO__USER:-wml}
-      MINIO_ROOT_PASSWORD: ${MINIO__PASSWOR}
+      MINIO_ROOT_PASSWORD: ${MINIO__PASSWORD}
     user: ${MINIO__LOCAL__UIDGID}
     volumes:
       - ${MINIO__LOCAL__PATH}:/data
@@ -35,9 +35,10 @@ services:
 
   wml_backend_api:
     build:
-      context: .
+      context: ./backend
+      target: dev
     container_name: wml_backend_api
-    command: ["/app/docker/dev.app.sh"]
+    command: ["/app/docker/dev.entrypoint.sh"]
     environment:
       BACKEND__DB__HOST: wml_db
       BACKEND__DB__PORT: ${BACKEND__DB__PORT:-1212}

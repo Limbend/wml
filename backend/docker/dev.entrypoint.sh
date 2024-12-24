@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# You must use line breaks in LF format!
+# Otherwise the container sends non-obvious errors. As if such a file does not exist. 
+
 sleep 2
 
 cd /app
