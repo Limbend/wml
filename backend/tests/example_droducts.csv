@@ -1,0 +1,61 @@
+name,model,price,is_purchased,buy_date,guarantee,product_link,priority
+Gaming Console,PlayStation 5,1204.98,False,,,,5
+Laptop,MacBook Pro 16,1861.2,True,2023-05-14,14,https://store.com/product/Apple_Watch_Series_9,4
+Bluetooth Speaker,JBL Charge 4,,False,,,https://gadgethub.com/product/Netgear_Nighthawk,1
+Gaming Console,PlayStation 5,1620.52,True,2021-01-05,0,https://example.com/product/Netgear_Nighthawk,9
+Headphones,Sony WH-1000XM4,821.79,True,2024-05-23,32,https://store.com/product/Canon_EOS_R,2
+Tablet,iPad Pro,,True,2020-12-10,25,,5
+Smartphone,Galaxy S21,1568.98,True,2020-04-19,25,https://gadgethub.com/product/Netgear_Nighthawk,1
+Monitor,Dell UltraSharp,1912.48,True,2022-01-16,6,,10
+Router,Netgear Nighthawk,2777.13,True,2024-12-04,23,,5
+Gaming Console,PlayStation 5,,False,,,,10
+Tablet,iPad Pro,772.07,True,2021-05-22,18,https://example.com/product/Sony_WH-1000XM4,3
+Headphones,Sony WH-1000XM4,730.97,True,2020-07-30,5,,10
+Router,Netgear Nighthawk,2499.76,False,,,https://gadgethub.com/product/Galaxy_S21,2
+Tablet,iPad Pro,475.73,False,,,,3
+Camera,Canon EOS R,230.4,True,2022-09-27,33,,9
+Gaming Console,PlayStation 5,,False,,,,4
+Router,Netgear Nighthawk,2143.82,True,2021-03-07,24,,10
+Monitor,Dell UltraSharp,1160.66,False,,,,8
+Monitor,Dell UltraSharp,1767.27,True,2022-12-06,20,,1
+Smartwatch,Apple Watch Series 9,2671.18,True,2022-05-14,28,https://techworld.com/product/PlayStation_5,10
+Bluetooth Speaker,JBL Charge 4,,False,,,https://example.com/product/Netgear_Nighthawk,6
+Headphones,Sony WH-1000XM4,2101.62,False,,,https://store.com/product/Sony_WH-1000XM4,2
+Headphones,Sony WH-1000XM4,624.46,False,,,,10
+Bluetooth Speaker,JBL Charge 4,2340.32,True,2022-03-05,2,https://example.com/product/Dell_UltraSharp,4
+Tablet,iPad Pro,724.77,False,,,https://gadgethub.com/product/Netgear_Nighthawk,2
+Monitor,Dell UltraSharp,698.19,True,2022-03-07,30,,6
+Tablet,iPad Pro,,False,,,,1
+Camera,Canon EOS R,1503.38,False,,,https://bestproducts.com/product/JBL_Charge_4,8
+Tablet,iPad Pro,653.81,False,,,,9
+Bluetooth Speaker,JBL Charge 4,,True,2020-03-07,23,,9
+Tablet,iPad Pro,1261.27,True,2024-12-05,11,https://bestproducts.com/product/Galaxy_S21,5
+Headphones,Sony WH-1000XM4,1834.27,False,,,https://store.com/product/JBL_Charge_4,8
+Monitor,Dell UltraSharp,2026.66,True,2022-05-29,23,https://store.com/product/Galaxy_S21,9
+Laptop,MacBook Pro 16,1944.91,True,2023-11-19,19,,10
+Smartphone,Galaxy S21,547.28,True,2021-06-13,23,https://gadgethub.com/product/Apple_Watch_Series_9,9
+Gaming Console,PlayStation 5,70.77,True,2023-10-30,0,,3
+Smartphone,Galaxy S21,2057.95,False,,,https://shoponline.com/product/Dell_UltraSharp,6
+Bluetooth Speaker,JBL Charge 4,2706.96,True,2023-07-31,31,,2
+Bluetooth Speaker,JBL Charge 4,2588.53,False,,,,7
+Router,Netgear Nighthawk,1845.31,False,,,https://techworld.com/product/Apple_Watch_Series_9,9
+Router,Netgear Nighthawk,1263.66,False,,,,3
+Tablet,iPad Pro,2111.89,True,2022-10-08,4,https://store.com/product/iPad_Pro,6
+Smartwatch,Apple Watch Series 9,1526.28,True,2023-07-08,6,,4
+Laptop,MacBook Pro 16,,False,,,,6
+Smartphone,Galaxy S21,940.65,True,2022-04-25,26,https://shoponline.com/product/Netgear_Nighthawk,5
+Monitor,Dell UltraSharp,701.76,False,,,,6
+Camera,Canon EOS R,,False,,,https://shoponline.com/product/PlayStation_5,1
+Monitor,Dell UltraSharp,1633.88,True,2024-10-16,30,https://techworld.com/product/JBL_Charge_4,10
+Gaming Console,PlayStation 5,528.8,True,2022-05-11,1,https://store.com/product/Dell_UltraSharp,4
+Camera,Canon EOS R,2166.36,True,2020-02-26,5,https://example.com/product/Galaxy_S21,5
+Smartwatch,Apple Watch Series 9,686.19,True,2021-02-06,24,https://shoponline.com/product/Sony_WH-1000XM4,3
+Router,Netgear Nighthawk,1540.58,True,2021-06-11,30,https://techworld.com/product/Canon_EOS_R,9
+Smartwatch,Apple Watch Series 9,,True,2022-01-19,7,https://gadgethub.com/product/MacBook_Pro_16,3
+Camera,Canon EOS R,1691.7,False,,,https://shoponline.com/product/iPad_Pro,8
+Gaming Console,PlayStation 5,2442.86,True,2023-08-19,29,,1
+Camera,Canon EOS R,2650.24,True,2022-04-18,28,https://techworld.com/product/Netgear_Nighthawk,6
+Camera,Canon EOS R,,True,2024-03-26,32,https://techworld.com/product/PlayStation_5,9
+Camera,Canon EOS R,,True,2022-01-28,7,https://store.com/product/Sony_WH-1000XM4,2
+Bluetooth Speaker,JBL Charge 4,1421.96,False,,,,1
+Router,Netgear Nighthawk,,True,2024-09-17,33,,7
