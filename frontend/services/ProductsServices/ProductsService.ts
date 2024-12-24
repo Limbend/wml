@@ -132,14 +132,14 @@ export default class ProductService {
                 type: 'success',
             });
 
-            return true;
+            return product as AsyncData<{ content: IProduct[] }, FetchError | null>;
         } catch (product) {
             console.log('products delProduct error', product);
             messageHandler({
                 message: 'Ошибка при удалении покупки',
                 type: 'error',
             });
-            return false;
+            return product as AsyncData<{ content: IProduct[] }, FetchError | null>;
         }
     }
 }

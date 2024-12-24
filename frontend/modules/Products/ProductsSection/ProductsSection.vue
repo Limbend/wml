@@ -7,7 +7,7 @@ import { useConfirm } from 'primevue/useconfirm';
 import ConfirmDialog from 'primevue/confirmdialog';
 
 const confirm = useConfirm();
-const rowsByPage = 15;
+const rowsByPage = 25;
 const currentPage = ref(0);
 
 const productParams = computed(() => {
@@ -86,14 +86,20 @@ const deleteProductConfirm = (productId: number) => {
 const deleteProductHandler = async (productId: number) => {
     loadingDelete.value = 'loading';
     const deletedProduct = products.value.find(i => i.id === productId);
-    const result = await ProductService.deleteProduct(
-        { product_id: productId },
+    const { data, status } = await ProductService.deleteProduct(
+        { product_id: productId, ...productParams.value },
         deletedProduct?.name || '',
     );
-    loadingDelete.value = 'success';
+    loadingDelete.value = status.value;
 
-    if (result) {
+    if (status.value === 'success') {
         products.value = products.value?.filter(i => i.id !== productId);
+        if (
+            data.value.content.length &&
+            !products.value.some(i => i.id === data.value.content[0].id)
+        ) {
+            products.value.push(data.value.content[0]);
+        }
         totalCount -= 1;
         editPopover.value = false;
     }
