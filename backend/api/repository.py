@@ -8,6 +8,7 @@ from datetime import datetime
 
 from s3 import S3Client
 from schemas import (
+    ProductSortingField,
     SBaseResponse,
     SProductAdd,
     SProductEdit,
@@ -110,6 +111,69 @@ class ProductRepo:
             return SResponseGet(total_count=total_count, content=product_shchemas)
 
     @classmethod
+    async def search(
+        cls, search_str: str, padding: SPagination, sorting: SSort
+    ) -> SResponseGet:
+        search_str = f"%{search_str}%"
+
+        def f_search_query(s):
+            return (
+                select(s)
+                .filter(
+                    or_(
+                        ProductOrm.name.like(search_str),
+                        ProductOrm.model.like(search_str),
+                        ProductOrm.product_link.like(search_str),
+                        cast(ProductOrm.price, String).like(search_str),
+                        cast(ProductOrm.buy_date, String).like(search_str),
+                        cast(ProductOrm.guarantee, String).like(search_str),
+                        cast(ProductOrm.guarantee_end_date, String).like(search_str),
+                    )
+                )
+                .filter_by(is_hidden=False)
+            )
+
+        async with new_session() as session:
+            query = f_search_query(func.count(ProductOrm.id))
+
+            result = await session.execute(query)
+            total_count = result.scalar()
+
+            query = f_search_query(ProductOrm).options(joinedload(ProductOrm.shop))
+
+            if sorting.field == ProductSortingField.off:
+                query.order_by(
+                    ProductOrm.name.like(search_str).desc(),
+                    ProductOrm.model.like(search_str).desc(),
+                    ProductOrm.product_link.like(search_str).desc(),
+                    cast(ProductOrm.price, String).like(search_str).desc(),
+                    cast(ProductOrm.buy_date, String).like(search_str).desc(),
+                    cast(ProductOrm.guarantee, String).like(search_str).desc(),
+                    cast(ProductOrm.guarantee_end_date, String).like(search_str).desc(),
+                    ProductOrm.id.desc(),
+                )
+            else:
+                if sorting.desc:
+                    query = query.order_by(
+                        getattr(ProductOrm, sorting.field.value).desc()
+                    )
+                else:
+                    query = query.order_by(
+                        getattr(ProductOrm, sorting.field.value).asc()
+                    )
+
+            query = query.offset(padding.get_offset()).limit(padding.by)
+            # logger.info(query.compile(compile_kwargs={"literal_binds": True}))
+
+            result = await session.execute(query)
+            product_shchemas = [
+                SProduct.model_validate(product_model)
+                for product_model in result.scalars().all()
+            ]
+
+        return SResponseGet(total_count=total_count, content=product_shchemas)
+
+    @classmethod
     async def edit_one(cls, data: SProductEdit) -> SResponseUpdate:
         async with new_session() as session:
             query = (
@@ -136,58 +200,6 @@ class ProductRepo:
 
         updated_product = product_in_db.model_copy(update=edit_fields)
         return SResponseUpdate(content=updated_product)
-
-    @classmethod
-    async def search(cls, search_str: str, padding: SPagination) -> SResponseGet:
-        search_str = f"%{search_str}%"
-
-        def f_search_query(s):
-            return (
-                select(s)
-                .filter(
-                    or_(
-                        ProductOrm.name.like(search_str),
-                        ProductOrm.model.like(search_str),
-                        ProductOrm.product_link.like(search_str),
-                        cast(ProductOrm.price, String).like(search_str),
-                        cast(ProductOrm.buy_date, String).like(search_str),
-                        cast(ProductOrm.guarantee, String).like(search_str),
-                        cast(ProductOrm.guarantee_end_date, String).like(search_str),
-                    )
-                )
-                .filter_by(is_hidden=False)
-            )
-
-        async with new_session() as session:
-            query = f_search_query(func.count(ProductOrm.id))
-
-            result = await session.execute(query)
-            total_count = result.scalar()
-
-            query = (
-                f_search_query(ProductOrm)
-                .options(joinedload(ProductOrm.shop))
-                .order_by(
-                    ProductOrm.name.like(search_str).desc(),
-                    ProductOrm.model.like(search_str).desc(),
-                    ProductOrm.product_link.like(search_str).desc(),
-                    cast(ProductOrm.price, String).like(search_str).desc(),
-                    cast(ProductOrm.buy_date, String).like(search_str).desc(),
-                    cast(ProductOrm.guarantee, String).like(search_str).desc(),
-                    cast(ProductOrm.guarantee_end_date, String).like(search_str).desc(),
-                    ProductOrm.id.desc(),
-                )
-                .offset(padding.get_offset())
-                .limit(padding.by)
-            )
-
-            result = await session.execute(query)
-            product_shchemas = [
-                SProduct.model_validate(product_model)
-                for product_model in result.scalars().all()
-            ]
-
-        return SResponseGet(total_count=total_count, content=product_shchemas)
 
     @classmethod
     async def upload_receipt(

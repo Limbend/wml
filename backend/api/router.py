@@ -1,9 +1,10 @@
-from typing import Annotated
+from typing import Annotated, Optional
 from fastapi import APIRouter, HTTPException, Body, Depends, File, UploadFile
 from starlette import status
 
 from repository import ProductRepo
 from schemas import (
+    ProductSortingField,
     ReceiptValidator,
     SProductEdit,
     SPagination,
@@ -20,9 +21,17 @@ router = APIRouter(prefix="/products", tags=["products"])
 
 @router.get("")
 async def get_products(
-    padding: Annotated[SPagination, Depends()], sorting: Annotated[SSort, Depends()]
+    padding: Annotated[SPagination, Depends()],
+    sorting: Annotated[SSort, Depends()],
+    search_query: Optional[str] = None,
 ) -> SResponseGet:
-    products = await ProductRepo.get_list(padding, sorting)
+    if search_query is None:
+        if sorting.field == ProductSortingField.off:
+            sorting.field = ProductSortingField.id
+        products = await ProductRepo.get_list(padding, sorting)
+    else:
+        products = await ProductRepo.search(search_query, padding, sorting)
+
     return products
 
 
@@ -97,14 +106,6 @@ async def edit_one(
 ) -> SResponseUpdate:
     response = await ProductRepo.edit_one(edit_product)
     return response
-
-
-@router.get("/search")
-async def search_products(
-    search_query: str, padding: Annotated[SPagination, Depends()]
-) -> SResponseGet:
-    products = await ProductRepo.search(search_query, padding)
-    return products
 
 
 @router.post("/receipts")
