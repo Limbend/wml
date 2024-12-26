@@ -124,13 +124,13 @@ class ProductRepo:
                 select(s)
                 .filter(
                     or_(
-                        ProductOrm.name.like(search_str),
-                        ProductOrm.model.like(search_str),
-                        ProductOrm.product_link.like(search_str),
-                        cast(ProductOrm.price, String).like(search_str),
-                        cast(ProductOrm.buy_date, String).like(search_str),
-                        cast(ProductOrm.guarantee, String).like(search_str),
-                        cast(ProductOrm.guarantee_end_date, String).like(search_str),
+                        ProductOrm.name.ilike(search_str),
+                        ProductOrm.model.ilike(search_str),
+                        ProductOrm.product_link.ilike(search_str),
+                        cast(ProductOrm.price, String).ilike(search_str),
+                        cast(ProductOrm.buy_date, String).ilike(search_str),
+                        cast(ProductOrm.guarantee, String).ilike(search_str),
+                        cast(ProductOrm.guarantee_end_date, String).ilike(search_str),
                     )
                 )
                 .filter_by(is_hidden=False)
@@ -146,13 +146,15 @@ class ProductRepo:
 
             if sorting.field == ProductSortingField.OFF:
                 query.order_by(
-                    ProductOrm.name.like(search_str).desc(),
-                    ProductOrm.model.like(search_str).desc(),
-                    ProductOrm.product_link.like(search_str).desc(),
-                    cast(ProductOrm.price, String).like(search_str).desc(),
-                    cast(ProductOrm.buy_date, String).like(search_str).desc(),
-                    cast(ProductOrm.guarantee, String).like(search_str).desc(),
-                    cast(ProductOrm.guarantee_end_date, String).like(search_str).desc(),
+                    ProductOrm.name.ilike(search_str).desc(),
+                    ProductOrm.model.ilike(search_str).desc(),
+                    ProductOrm.product_link.ilike(search_str).desc(),
+                    cast(ProductOrm.price, String).ilike(search_str).desc(),
+                    cast(ProductOrm.buy_date, String).ilike(search_str).desc(),
+                    cast(ProductOrm.guarantee, String).ilike(search_str).desc(),
+                    cast(ProductOrm.guarantee_end_date, String)
+                    .ilike(search_str)
+                    .desc(),
                     ProductOrm.id.desc(),
                 )
             else:
