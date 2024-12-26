@@ -201,18 +201,18 @@ class SPagination(BaseModel):
 
 
 class ProductSortingField(Enum):
-    off = "off"
-    id = "id"
-    name = "name"
-    buy_date = "buy_date"
-    guarantee = "guarantee"
-    guarantee_end_date = "guarantee_end_date"
-    product_link = "product_link"
-    priority = "priority"
+    OFF = "off"
+    ID = "id"
+    NAME = "name"
+    BUY_DATE = "buy_date"
+    GUARANTEE = "guarantee"
+    GUARANTEE_END_DATE = "guarantee_end_date"
+    PRODUCT_LINK = "product_link"
+    PRIORITY = "priority"
 
 
 class SSort(BaseModel):
-    field: Optional[ProductSortingField] = ProductSortingField.off
+    field: Optional[ProductSortingField] = ProductSortingField.OFF
     desc: Optional[bool] = False
 
 

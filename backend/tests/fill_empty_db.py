@@ -9,9 +9,9 @@ import csv
 sys.path.append(os.path.join(sys.path[0], ".."))
 sys.path.append(os.path.join(sys.path[0], "../api"))
 
-from api.config import settings
-from api.repository import ProductRepo
-from api.schemas import SPagination, SProductAdd, SSort
+from config import settings
+from repository import ProductRepo
+from schemas import SPagination, SProductAdd, SSort
 
 
 lc.dictConfig(settings.logging_config)

@@ -26,8 +26,6 @@ async def get_products(
     search_query: Optional[str] = None,
 ) -> SResponseGet:
     if search_query is None:
-        if sorting.field == ProductSortingField.off:
-            sorting.field = ProductSortingField.id
         products = await ProductRepo.get_list(padding, sorting)
     else:
         products = await ProductRepo.search(search_query, padding, sorting)

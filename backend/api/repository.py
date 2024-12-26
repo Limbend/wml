@@ -94,6 +94,9 @@ class ProductRepo:
                 .options(joinedload(ProductOrm.shop))
                 .filter_by(is_hidden=False)
             )
+            if sorting.field is ProductSortingField.OFF:
+                sorting.field = ProductSortingField.ID
+
             if sorting.desc:
                 query = query.order_by(getattr(ProductOrm, sorting.field.value).desc())
             else:
@@ -141,7 +144,7 @@ class ProductRepo:
 
             query = f_search_query(ProductOrm).options(joinedload(ProductOrm.shop))
 
-            if sorting.field == ProductSortingField.off:
+            if sorting.field == ProductSortingField.OFF:
                 query.order_by(
                     ProductOrm.name.like(search_str).desc(),
                     ProductOrm.model.like(search_str).desc(),
