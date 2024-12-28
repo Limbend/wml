@@ -1,4 +1,5 @@
 import logging
+from typing import Union
 from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import func, select, update, or_, String
 from sqlalchemy.orm import joinedload
@@ -240,14 +241,15 @@ class ProductRepo:
 
     @classmethod
     async def _create_and_set_shop_(
-        cls, session, shop_name: str, target_product: ProductOrm
+        cls, session, shop_name: str, target_product: Union[ProductOrm, SProduct]
     ):
         query = select(ShopOrm).filter_by(name=shop_name)
         result = await session.execute(query)
         result = result.scalar()
 
         if result is not None:
-            target_product.shop_id = result.id
+            if type(target_product) is ProductOrm:
+                target_product.shop_id = result.id
             target_product.shop = result
         else:
             shop = ShopOrm(name=shop_name)
