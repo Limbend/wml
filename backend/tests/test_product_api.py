@@ -15,8 +15,8 @@ async def test_add_product(ac: AsyncClient):
             "price": 49899.30,
             "is_purchased": True,
             "buy_date": "2024-10-12",
-            "receipt": "http://example.com/prodict1",
-            "shop": "Amazon",
+            "guarantee": 12,
+            "product_link": "https://www.mi.com",
             "priority": 1,
         },
     )
@@ -25,7 +25,6 @@ async def test_add_product(ac: AsyncClient):
     response = response.json()
     assert response["ok"] == True
     assert "product_id" in response["content"].keys()
-    assert "guarantee" in response["content"]["auto_generated_fields"].keys()
     assert "guarantee_end_date" in response["content"]["auto_generated_fields"].keys()
 
     global product_id, guarantee_end_date

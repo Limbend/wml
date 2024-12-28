@@ -14,14 +14,14 @@ logger = logging.getLogger(__name__)
 
 
 class SShop(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, extra="forbid")
 
     id: int = Field(gt=0)
     name: str_256 = Field(max_length=256)
 
 
 class SProductAdd(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, extra="forbid")
 
     name: str_50 = Field(min_length=1, max_length=50)
     model: Optional[str_256] = Field(None, max_length=256)

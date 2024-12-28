@@ -1,3 +1,5 @@
+import os
+import sys
 from typing import AsyncGenerator
 
 import pytest
@@ -6,7 +8,10 @@ from fastapi.testclient import TestClient
 
 from httpx import ASGITransport, AsyncClient
 
-from api.main import app
+sys.path.append(os.path.join(sys.path[0], ".."))
+sys.path.append(os.path.join(sys.path[0], "../api"))
+
+from main import app
 
 
 # import asyncio
@@ -14,7 +19,7 @@ from api.main import app
 # from sqlalchemy.pool import NullPool
 
 # from api.config import settings
-# from api.repository import new_session
+# from api.repository import new_se ssion
 
 
 # engine_test = create_async_engine(
