@@ -1,10 +1,17 @@
 from typing import Annotated, Optional
-from fastapi import APIRouter, HTTPException, Body, Depends, File, UploadFile
-from starlette import status
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Body,
+    Depends,
+    File,
+    Response,
+    UploadFile,
+    status,
+)
 
 from repository import ProductRepo
 from schemas import (
-    ProductSortingField,
     ReceiptValidator,
     SProductEdit,
     SPagination,
@@ -77,8 +84,8 @@ async def edit_one(
                     "description": "Update multiple fields.",
                     "value": {
                         "id": 1,
-                        "price": 50.01,
                         "model": "super pro max extra ++",
+                        "price": 50.01,
                         "buy_date": "2024-09-29",
                     },
                 },
@@ -88,19 +95,19 @@ async def edit_one(
                     "value": {
                         "id": 1,
                         "name": "Gamer's spoon",
-                        "price": 50.01,
                         "model": "super pro max extra ++",
+                        "price": 50.01,
                         "is_purchased": False,
                         "buy_date": "2024-09-29",
                         "guarantee": 2,
                         "receipt": "string",
-                        "shop": "https://amazon.com",
-                        "priority": 0,
+                        "product_link": "https://amazon.com/example-product",
+                        "priority": 1,
                     },
                 },
             }
         ),
-    ]
+    ],
 ) -> SResponseUpdate:
     response = await ProductRepo.edit_one(edit_product)
     return response

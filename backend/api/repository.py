@@ -1,5 +1,5 @@
 import logging
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile, status
 from sqlalchemy import func, select, update, or_, String
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.expression import cast
@@ -198,6 +198,15 @@ class ProductRepo:
                 await session.flush()
 
             edit_fields = data.get_edit_fields(product_in_db)
+            if len(edit_fields) == 0:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=SResponseUpdate(
+                        ok=False,
+                        content=product_in_db,
+                        message=f"There is no new data to change.",
+                    ).model_dump(mode="json"),
+                )
             query = update(ProductOrm).values(**edit_fields).filter_by(id=data.id)
             # logger.info(query.compile(compile_kwargs={'literal_binds': True}))
             await session.execute(query)

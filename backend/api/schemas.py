@@ -1,7 +1,6 @@
 import logging
 from typing import Optional, List, Union
-from fastapi import HTTPException
-from starlette import status
+from fastapi import HTTPException, status
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.json_schema import SkipJsonSchema
 from datetime import date
