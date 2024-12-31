@@ -25,7 +25,9 @@ const schema = Yup.object().shape({
     is_purchased: Yup.boolean().nullable(),
     buy_date: Yup.date().nullable(),
     guarantee: Yup.number().nullable(),
-    shop: Yup.string().nullable().max(255, 'Максимальное количество символов 255'),
+    product_link: Yup.string()
+        .nullable()
+        .max(255, 'Максимальное количество символов 255'),
     priority: Yup.number().nullable(),
 });
 
@@ -42,7 +44,7 @@ const [price] = defineField('price');
 const [purchased] = defineField('is_purchased');
 const [buy_date] = defineField('buy_date') as any;
 const [guarantee] = defineField('guarantee');
-const [shop] = defineField('shop');
+const [product_link] = defineField('product_link');
 const [priority] = defineField('priority');
 
 // deprecated, but that was so cool, why did they deprecate it, wtf!?
@@ -53,7 +55,8 @@ const prepareData = (data: IProduct) => {
     preparedData.buy_date =
         preparedData.buy_date &&
         new Date(preparedData.buy_date).toLocaleDateString('en-CA');
-    // delete preparedData.guarantee_end_date;
+    delete preparedData.guarantee_end_date;
+    delete preparedData.shop;
     return preparedData;
 };
 
@@ -187,18 +190,18 @@ const onSubmit: any = handleSubmit((values: IProduct) => {
                 <FloatLabel variant="on">
                     <InputText
                         class="w-full"
-                        :class="submitCount && errors.shop && 'p-invalid'"
+                        :class="submitCount && errors.product_link && 'p-invalid'"
                         type="text"
-                        id="product-shop"
-                        v-model="shop" />
+                        id="product-product-link"
+                        v-model="product_link" />
                     <label
-                        for="product-shop"
-                        :class="submitCount && errors.shop && '!text-errorColor'"
+                        for="product-product_link"
+                        :class="submitCount && errors.product_link && '!text-errorColor'"
                         >Место приобретения</label
                     >
                 </FloatLabel>
                 <small v-if="submitCount" class="ml-2 text-errorColor">{{
-                    errors.shop
+                    errors.product_link
                 }}</small>
             </div>
 

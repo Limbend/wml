@@ -10,6 +10,9 @@ export interface IProductApiParams {
     by?: number;
     chunk?: number;
     product_id?: number;
+    field?: keyof IProduct;
+    desc?: boolean;
+    search_query?: string;
 }
 
 const launchApi = {

@@ -54,6 +54,8 @@ export default defineNuxtConfig({
                 'DatePicker',
                 'Checkbox',
                 'Column',
+                'IconField',
+                'InputIcon',
             ],
         },
     },

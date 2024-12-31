@@ -1,6 +1,7 @@
 @use '~/assets/styles/variables' as *;
 @use '~/assets/styles/media';
 @use 'primeicons/primeicons.css';
+@use '~/assets/styles/primeVue/customStyles';
 
 * {
   box-sizing: border-box;

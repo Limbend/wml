@@ -7,28 +7,43 @@ import { useConfirm } from 'primevue/useconfirm';
 import ConfirmDialog from 'primevue/confirmdialog';
 
 const confirm = useConfirm();
-const rowsByPage = 25;
-const currentPage = ref(0);
-
-const productParams = computed(() => {
-    return { by: rowsByPage, chunk: currentPage.value };
-});
 
 // infinite scroll
 const infiniteScrollTrigger = ref<HTMLElement | null>(null);
+const rowsByPage = 25;
+const currentPage = ref(0);
+const sortParams = ref<{ field?: keyof IProduct; desc?: boolean }>({});
+const searchParam = ref('');
+
+const productParams = computed(() => {
+    return {
+        by: rowsByPage,
+        chunk: currentPage.value,
+        ...sortParams.value,
+        search_query: searchParam.value || undefined,
+    };
+});
+
 const { data } = await ProductService.getAll(productParams.value);
 
 // Products
 const products = ref<IProduct[]>([...data.value.content]);
+const infinityScrollLoading = ref<TStatus>('success');
 const productsLoading = ref<TStatus>('success');
 let totalCount = data.value.total_count;
 
-const fetchProducts = async () => {
-    const { data } = await ProductService.getAll(productParams.value, productsLoading);
+const fetchProducts = async (infinityScroll?: boolean) => {
+    const { data } = await ProductService.getAll(
+        productParams.value,
+        infinityScroll ? infinityScrollLoading : productsLoading,
+    );
 
-    if (data.value.content.length) {
+    if (infinityScroll && data.value.content.length) {
         totalCount = data.value.total_count;
         products.value.push(...data.value.content);
+    } else {
+        totalCount = data.value.total_count;
+        products.value = data.value.content;
     }
 };
 
@@ -42,6 +57,19 @@ const loadingDelete = ref<TStatus | undefined>();
 
 // PURCHASED CHECKBOX
 const purchasedCheckboxLoading = ref<Record<string, TStatus>>({});
+
+// SORT
+const changeSortParams = async (params: { field?: keyof IProduct; desc?: boolean }) => {
+    sortParams.value = params;
+    currentPage.value = 0;
+    await fetchProducts();
+};
+
+const changeSearchParam = async (value: string) => {
+    searchParam.value = value;
+    currentPage.value = 0;
+    await fetchProducts();
+};
 
 const createProductHandler = (newProduct: IProduct) => {
     products.value.unshift(newProduct);
@@ -139,7 +167,7 @@ watchEffect(() => {
         async ([entry]) => {
             if (entry.isIntersecting) {
                 currentPage.value += 1;
-                await fetchProducts();
+                await fetchProducts(true);
             }
         },
         { rootMargin: '0px 0px 100px 0px' }, // Триггер срабатывает за 100px до видимости элемента
@@ -157,24 +185,24 @@ watchEffect(() => {
     <section class="p-4">
         <div class="flex flex-wrap gap-2 justify-between items-center mb-4">
             <h1 class="whitespace-nowrap">Список покупок</h1>
-            <Button
-                icon="pi pi-plus"
-                label="Создать"
-                outlined
-                @click="addPopover = true" />
         </div>
-
         <ProductsTable
             :products="products"
             :loadingCheckbox="purchasedCheckboxLoading"
+            :loading="productsLoading === 'loading'"
+            @add-product="addPopover = true"
             @edit="openEditPopover"
-            @change-purchased-state="changePurchasedStateHandler" />
+            @change-purchased-state="changePurchasedStateHandler"
+            @sort="changeSortParams"
+            @search="changeSearchParam" />
 
-        <UILoader v-if="productsLoading === 'loading'" />
+        <UILoader v-if="infinityScrollLoading === 'loading'" />
         <div
             ref="infiniteScrollTrigger"
             class="h-1"
-            v-show="productsLoading === 'success' && products.length < totalCount"></div>
+            v-show="
+                infinityScrollLoading === 'success' && products.length < totalCount
+            "></div>
 
         <Drawer
             v-model:visible="addPopover"
