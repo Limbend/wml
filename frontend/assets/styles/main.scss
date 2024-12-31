@@ -1,4 +1,7 @@
 @use '~/assets/styles/variables' as *;
+@use '~/assets/styles/media';
+@use 'primeicons/primeicons.css';
+@use '~/assets/styles/primeVue/customStyles';
 
 * {
   box-sizing: border-box;
@@ -39,7 +42,6 @@ a {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -48,7 +50,3 @@ a {
     background-color: $dark-bg-color;
   }
 }
-
-@import 'primeicons/primeicons.css';
-// Импорт медиа запросов
-@import '~/assets/styles/media';

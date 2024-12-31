@@ -5,30 +5,29 @@ import ProductService from '~/services/ProductsServices/ProductsService';
 import type { TStatus } from '~/types/index.types';
 
 type Props = {
-  visible: Boolean;
+    visible: Boolean;
 };
 
 defineProps<Props>();
 
 const emit = defineEmits(['onCreate']);
 
-const loading = ref<TStatus | undefined>(undefined);
+const loading = ref<TStatus>('success');
 
 const onSubmit = async (formData: IProduct) => {
-  loading.value = 'loading';
-  const { data, status } = await ProductService.createProduct(formData);
-  loading.value = status.value;
-  if ('product_id' in data.value.content) {
-    const newProduct = {
-      ...formData,
-      ...data.value?.content.auto_generated_fields,
-      id: data.value.content.product_id,
-    };
-    emit('onCreate', newProduct);
-  }
+    loading.value = 'loading';
+    const { data } = await ProductService.createProduct(formData, loading);
+    if ('product_id' in data.value.content) {
+        const newProduct = {
+            ...formData,
+            ...data.value?.content.auto_generated_fields,
+            id: data.value.content.product_id,
+        };
+        emit('onCreate', newProduct);
+    }
 };
 </script>
 
 <template>
-  <ProductPopover :visible="visible" :loading="loading" @submit="onSubmit" />
+    <ProductPopover :visible="visible" :loading="loading" @submit="onSubmit" />
 </template>
