@@ -46,8 +46,11 @@ const onEdit = (value: DataTableRowDoubleClickEvent) => {
 };
 
 const onSort = (value: DataTableSortEvent) => {
+    const sortField =
+        value.sortField === 'shop' ? 'product_link' : value.sortField || undefined;
+
     emit('sort', {
-        field: value.sortField || undefined,
+        field: sortField,
         desc: value.sortOrder === 1 ? false : true,
     });
 };
@@ -90,7 +93,7 @@ const searchEmptyInputHandle = () => {
         @sort="onSort"
         @row-dblclick="onEdit"
         lazy>
-        <Column field="is_purchased">
+        <Column field="is_purchased" header=" " :sortable="true">
             <template #body="{ data }">
                 <Checkbox
                     v-model="data.is_purchased"
