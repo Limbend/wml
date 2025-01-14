@@ -1,4 +1,4 @@
-FROM python:3.9 AS builder
+FROM python:3.13 AS builder
 
 RUN mkdir /app
 WORKDIR /app
@@ -15,7 +15,7 @@ ADD ./poetry.lock .
 RUN touch README.md
 RUN poetry install --without dev --no-root && rm -rf $POETRY_CACHE_DIR
 
-FROM python:3.9-slim AS dev
+FROM python:3.13-slim AS dev
 LABEL version="0.1"
 
 RUN mkdir /app
