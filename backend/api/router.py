@@ -1,11 +1,12 @@
+import logging
 from typing import Annotated, Optional
+from contextlib import asynccontextmanager
 from fastapi import (
     APIRouter,
     HTTPException,
     Body,
     Depends,
     File,
-    Response,
     UploadFile,
     status,
 )
@@ -23,7 +24,18 @@ from schemas import (
     SSort,
 )
 
-router = APIRouter(prefix="/products", tags=["products"])
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: APIRouter):
+    logger.info(f"Product router STARTING")
+    await ProductRepo.check_db_connection()
+    yield
+    logger.info(f"Product router SHUTDOWN")
+
+
+router = APIRouter(prefix="/products", tags=["products"], lifespan=lifespan)
 
 
 @router.get("")

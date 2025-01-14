@@ -31,6 +31,7 @@ class Settings(BaseSettings):
         env_prefix="BACKEND__",
     )
 
+    launch_mode: str
     db: DatabaseConfig
     s3: S3Config
     origins: list[str]

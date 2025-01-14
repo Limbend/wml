@@ -13,6 +13,8 @@ from schemas import ReceiptValidator
 from middlewares import LimitUploadSize
 from router import router as product_router
 
+logger.info(f"Launch mode = {settings.launch_mode}")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

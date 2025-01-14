@@ -33,11 +33,11 @@ engine = create_async_engine(
 )
 new_session = async_sessionmaker(engine, expire_on_commit=False)
 logger.info(
-    f"Created DB engine. URL: {settings.db.host}:{settings.db.port}\t\tDB_Name: {settings.db.name}"
+    f"Created DB Engine. URL:\t{settings.db.host + ':' + str(settings.db.port): <30} DB_Name:\t{settings.db.name}"
 )
 s3_client = S3Client(**settings.s3.model_dump())
 logger.info(
-    f"Created S3 Client. URL: {settings.s3.endpoint_url}\t\tBucket: {settings.s3.bucket_name}"
+    f"Created S3 Client. URL:\t{settings.s3.endpoint_url: <30} Bucket:\t{settings.s3.bucket_name}"
 )
 
 
@@ -238,6 +238,19 @@ class ProductRepo:
             await session.execute(query)
             await session.commit()
         return SResponseAddReceipt(content=path)
+
+    @classmethod
+    async def check_db_connection(cls):
+        try:
+            async with new_session() as session:
+                query = select(func.count(ProductOrm.id)).filter_by(is_hidden=False)
+                result = await session.execute(query)
+                total_count = result.scalar()
+        except Exception as e:
+            logger.error(f"Check DB connection - {type(e)} {e}")
+            raise e
+
+        logger.info(f"The DB is ready to work.")
 
     @classmethod
     async def _create_and_set_shop_(
