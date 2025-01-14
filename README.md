@@ -18,6 +18,8 @@
    `.env` example:
 
    ```.env
+   BACKEND__LAUNCH_MODE=dev
+
    BACKEND__DB__PASSWORD=your_db_password
    BACKEND__DB__ECHO=false
 

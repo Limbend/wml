@@ -40,6 +40,7 @@ services:
     container_name: wml_backend_api
     command: ["/app/docker/dev.entrypoint.sh"]
     environment:
+      BACKEND__LAUNCH_MODE: ${BACKEND__LAUNCH_MODE:-dev}
       BACKEND__DB__HOST: wml_db
       BACKEND__DB__PORT: ${BACKEND__DB__PORT:-1212}
       BACKEND__DB__USER: ${BACKEND__DB__USER:-wml_app}
