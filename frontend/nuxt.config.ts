@@ -49,6 +49,7 @@ export default defineNuxtConfig({
                 'Drawer',
                 'ConfirmDialog',
                 'FloatLabel',
+                'FileUpload',
                 'InputText',
                 'InputNumber',
                 'DatePicker',
@@ -56,6 +57,7 @@ export default defineNuxtConfig({
                 'Column',
                 'IconField',
                 'InputIcon',
+                'Popover',
             ],
         },
     },
@@ -68,6 +70,12 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             apiBase: '',
+        },
+        s3: {
+            accessKeyId: process.env.S3_ACCESS_KEY_ID,
+            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+            bucketName: process.env.S3_BUCKET_NAME,
+            path: process.env.S3_ENDPOINT_URL,
         },
     },
     vite: {

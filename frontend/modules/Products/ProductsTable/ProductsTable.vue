@@ -21,6 +21,7 @@ const emit = defineEmits([
     'sort',
     'addProduct',
     'search',
+    'receipt',
 ]);
 
 const searchValue = ref('');
@@ -63,6 +64,10 @@ const searchEmptyInputHandle = () => {
     searchValue.value = '';
     emit('search', searchValue.value);
 };
+
+const onReceiptClick = (event: Event, product: IProduct) => {
+    emit('receipt', product, event);
+};
 </script>
 
 <template>
@@ -100,6 +105,18 @@ const searchEmptyInputHandle = () => {
                     binary
                     :disabled="loadingCheckbox[data.id] === 'loading'"
                     @click="$emit('changePurchasedState', toRaw(data))" />
+            </template>
+        </Column>
+
+        <Column header=" " sortable>
+            <template #body="slotProps">
+                <Button
+                    type="button"
+                    @click="onReceiptClick($event, slotProps.data)"
+                    icon="pi pi-image"
+                    :severity="slotProps.data.id === 1 ? 'success' : 'secondary'"
+                    rounded
+                    text></Button>
             </template>
         </Column>
 
