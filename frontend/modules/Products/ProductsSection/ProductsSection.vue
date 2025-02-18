@@ -58,6 +58,18 @@ const loadingDelete = ref<TStatus | undefined>();
 // PURCHASED CHECKBOX
 const purchasedCheckboxLoading = ref<Record<string, TStatus>>({});
 
+// RECEIPT
+const receiptPopover = ref();
+const selectedProductReceipt = ref<IProduct>();
+
+const openProductReceiptPopover = (product: IProduct, event: Event) => {
+    receiptPopover.value.hide();
+    selectedProductReceipt.value = product;
+    nextTick(() => {
+        receiptPopover.value.show(event);
+    });
+};
+
 // SORT
 const changeSortParams = async (params: { field?: keyof IProduct; desc?: boolean }) => {
     sortParams.value = params;
@@ -194,7 +206,8 @@ watchEffect(() => {
             @edit="openEditPopover"
             @change-purchased-state="changePurchasedStateHandler"
             @sort="changeSortParams"
-            @search="changeSearchParam" />
+            @search="changeSearchParam"
+            @receipt="openProductReceiptPopover" />
 
         <UILoader v-if="infinityScrollLoading === 'loading'" />
         <div
@@ -225,6 +238,12 @@ watchEffect(() => {
                 @on-edit="editProductHandler"
                 @on-delete="deleteProductConfirm" />
         </Drawer>
+
+        <Popover ref="receiptPopover">
+            <div v-if="selectedProductReceipt" class="rounded flex flex-col">
+                <ProductReceiptPopover :productId="selectedProductReceipt.id || 0" />
+            </div>
+        </Popover>
     </section>
 
     <ConfirmDialog group="productDelete" />

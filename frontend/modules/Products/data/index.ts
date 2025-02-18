@@ -6,8 +6,8 @@ export const initialTableColumns: {
     sortable?: Boolean;
 }[] = [
     { field: 'name', header: 'Наименование', sortable: true },
-    { field: 'model', header: 'Модель' },
-    { field: 'price', header: 'Цена, ₽' },
+    { field: 'model', header: 'Модель', sortable: true },
+    { field: 'price', header: 'Цена, ₽', sortable: true },
     { field: 'buy_date', header: 'Дата покупки', sortable: true },
     { field: 'guarantee', header: 'Гарантийный срок, месяц', sortable: true },
     { field: 'guarantee_end_date', header: 'Окончание гарантии', sortable: true },

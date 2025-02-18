@@ -21,6 +21,7 @@ const emit = defineEmits([
     'sort',
     'addProduct',
     'search',
+    'receipt',
 ]);
 
 const searchValue = ref('');
@@ -46,8 +47,11 @@ const onEdit = (value: DataTableRowDoubleClickEvent) => {
 };
 
 const onSort = (value: DataTableSortEvent) => {
+    const sortField =
+        value.sortField === 'shop' ? 'product_link' : value.sortField || undefined;
+
     emit('sort', {
-        field: value.sortField || undefined,
+        field: sortField,
         desc: value.sortOrder === 1 ? false : true,
     });
 };
@@ -59,6 +63,10 @@ const searchInputHandle = debounce(() => {
 const searchEmptyInputHandle = () => {
     searchValue.value = '';
     emit('search', searchValue.value);
+};
+
+const onReceiptClick = (event: Event, product: IProduct) => {
+    emit('receipt', product, event);
 };
 </script>
 
@@ -90,13 +98,25 @@ const searchEmptyInputHandle = () => {
         @sort="onSort"
         @row-dblclick="onEdit"
         lazy>
-        <Column field="is_purchased">
+        <Column field="is_purchased" header=" " :sortable="true">
             <template #body="{ data }">
                 <Checkbox
                     v-model="data.is_purchased"
                     binary
                     :disabled="loadingCheckbox[data.id] === 'loading'"
                     @click="$emit('changePurchasedState', toRaw(data))" />
+            </template>
+        </Column>
+
+        <Column header=" " sortable>
+            <template #body="slotProps">
+                <Button
+                    type="button"
+                    @click="onReceiptClick($event, slotProps.data)"
+                    icon="pi pi-image"
+                    :severity="slotProps.data.id === 1 ? 'success' : 'secondary'"
+                    rounded
+                    text></Button>
             </template>
         </Column>
 
