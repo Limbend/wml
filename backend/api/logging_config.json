@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "disable_existing_loggers": true,
+
+  "filters": {
+    "sensitive": {
+      "()": "logformater.SensitiveDataFilter"
+    }
+  },
+
+  "formatters": {
+    "standard": {
+      "format": "%(asctime)s - %(levelname)-8s - %(name)-24s - %(message)s",
+      "datefmt": "%Y-%m-%d %H:%M:%S"
+    },
+    "colored": {
+      "()": "logformater.ColoredFormatter",
+      "format": "%(asctime)s - %(levelname)-17s - %(name)-24s - %(message)s",
+      "datefmt": "%Y-%m-%d %H:%M:%S"
+    },
+    "detailed": {
+      "format": "%(asctime)s - %(levelname)-8s - %(name)-24s - %(message)s - [%(filename)s:%(lineno)d]"
+    }
+  },
+
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "level": "INFO",
+      "formatter": "colored",
+      "filters": ["sensitive"],
+      "stream": "ext://sys.stdout"
+    },
+
+    "rotating_file": {
+      "class": "logging.handlers.RotatingFileHandler",
+      "level": "INFO",
+      "formatter": "detailed",
+      "filename": "./logs/wml.info.log",
+      "maxBytes": 10485760,
+      "backupCount": 3,
+      "encoding": "utf8"
+    },
+
+    "error_rotating_file": {
+      "class": "logging.handlers.RotatingFileHandler",
+      "level": "ERROR",
+      "formatter": "detailed",
+      "filename": "./logs/wml.error.log",
+      "maxBytes": 10485760,
+      "backupCount": 3,
+      "encoding": "utf8"
+    }
+  },
+
+  "loggers": {
+    "": {
+      "level": "INFO",
+      "handlers": ["console", "rotating_file", "error_rotating_file"],
+      "propagate": false
+    },
+    "repository": {
+      "level": "INFO",
+      "handlers": ["console", "rotating_file", "error_rotating_file"],
+      "propagate": false
+    },
+    "schemas": {
+      "level": "INFO",
+      "handlers": ["console", "rotating_file", "error_rotating_file"],
+      "propagate": false
+    },
+    "s3": {
+      "level": "INFO",
+      "handlers": ["console", "rotating_file", "error_rotating_file"],
+      "propagate": false
+    },
+    "sqlalchemy.engine.Engine": {
+      "level": "DEBUG",
+      "handlers": ["console", "rotating_file", "error_rotating_file"],
+      "propagate": false
+    },
+    "uvicorn.error": {
+      "level": "DEBUG",
+      "handlers": ["console", "rotating_file", "error_rotating_file"],
+      "propagate": false
+    },
+    "uvicorn.access": {
+      "level": "DEBUG",
+      "handlers": ["console", "rotating_file", "error_rotating_file"],
+      "propagate": false
+    }
+  }
+}
