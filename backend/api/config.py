@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 import json
@@ -43,7 +44,8 @@ class Settings(BaseSettings):
         log_dir = "./logs"
         os.makedirs(log_dir, exist_ok=True)
 
-        with open(self.log_cfg) as f:
+        path = Path(__file__).resolve().parent / self.log_cfg
+        with path.open() as f:
             config = json.load(f)
 
         return config
