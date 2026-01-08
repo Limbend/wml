@@ -1,38 +1,36 @@
-[tool.pytest.ini_options]
-pythonpath = [
-  ".", "api",
-]
-asyncio_mode="auto"
-
-[tool.poetry]
+[project]
 name = "wml"
-package-mode = false
 version = "0.1.0"
 description = ""
-authors = ["Limbend <termir988@gmail.com>"]
+authors = [
+  { name = "Limbend", email = "termir988@gmail.com" }
+]
 readme = "README.md"
+requires-python = ">=3.9"
 
-[tool.poetry.dependencies]
-python = "^3.9"
-alembic = "^1.13.3"
-asyncpg = "^0.30.0"
-fastapi = "^0.115.0"
-uvicorn = "^0.31.1"
-sqlalchemy = "^2.0.35"
-python-dateutil = "^2.9.0.post0"
-gunicorn = "^23.0.0"
-pydantic-settings = "^2.5.2"
-aiobotocore = "^2.15.2"
-python-multipart = "^0.0.17"
+dependencies = [
+  "alembic>=1.13.3",
+  "asyncpg>=0.30.0",
+  "fastapi>=0.115.0",
+  "uvicorn>=0.31.1",
+  "sqlalchemy>=2.0.35",
+  "python-dateutil>=2.9.0.post0",
+  "gunicorn>=23.0.0",
+  "pydantic-settings>=2.5.2",
+  "aiobotocore>=2.15.2",
+  "python-multipart>=0.0.17",
+  "colorama>=0.4.6",
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.3"
-pytest-asyncio = "^0.24.0"
-black = "^24.10.0"
-httpx = "^0.27.2"
-pytest-dependency = "^0.6.0"
-colorama = "^0.4.6"
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.3",
+  "pytest-asyncio>=0.24.0",
+  "black>=24.10.0",
+  "httpx>=0.27.2",
+  "pytest-dependency>=0.6.0",
+]
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.pytest.ini_options]
+pythonpath = [ ".", "api" ]
+asyncio_mode="auto"
