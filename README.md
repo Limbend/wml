@@ -27,7 +27,7 @@
    BACKEND__S3__SECRET_KEY=your_s3_secret_key
    BACKEND__S3__ENDPOINT_URL=https://s3.example.com
 
-   BACKEND__ORIGINS='["http://172.24.0.4:3000","https://example.com"]'
+   BACKEND__ORIGINS='["http://wml_frontend:3000","https://example.com"]'
 
    MINIO__USER=your_minio_user
    MINIO__PASSWORD=your_minio_password
